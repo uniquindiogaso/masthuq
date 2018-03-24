@@ -3,4 +3,5 @@ D:/Program Files (x86)/eclipse/eclipse-neon/plugins/sf.eclipse.javacc_1.5.33/jar
 D:/Program Files (x86)/eclipse/eclipse-neon/plugins/sf.eclipse.javacc_1.5.33/jars/jtb-1.4.11.jar
 
 #LAPTOP GASO
-
+D:/Tools/eclipse-neon/plugins/sf.eclipse.javacc_1.5.33/jars/javacc-5.0.jar
+D:/Tools/eclipse-neon/plugins/sf.eclipse.javacc_1.5.33/jars/jtb-1.4.11.jar
