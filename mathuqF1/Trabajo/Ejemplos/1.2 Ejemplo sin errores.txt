@@ -1,0 +1,11 @@
+A, b. ##Esto es un comentario##
+Finsi, Entero
+
+{{a}} a<hg ...
+Imprimir Leer Escribir <<= "Cadena"
+48+po-ld==dos
+
+"Cadena" ##Comentario##
+Sino <- <- 87* Logico
+
+

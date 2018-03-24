@@ -1,5 +1,12 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ *
+ * Materia: Compiladores | Docente: RUTH STELLA CRUZ CETINA
+ * GUSTAVO ADOLFO SALGADO OCAMPO
+ * CRISTIAN DAVID TORO GARCIA
+ * JORGE MARIO BURBANO MARTINEZ
+ * Universidad del Quindio - 2018
+ *
  */
 options
 {
@@ -16,7 +23,7 @@ public class Analizador
 
    private static void grabarLexema (int n, String token,  String lexema, int nL, int nC) {
       //System.out.println(n + ") Token: \t"+  token + "\t\t\tLexema: \t\"" + lexema + "\" \tLinea: \t"+ nL + "\tColumna: \t" + nC);
-      System.out.println(n + ") Linea:\t"+nL+"\tColumna:\t"+nC+"\tLexema:\t\""+lexema+"\"\t"+"Token:\t"+token);
+      System.out.println(n + ") Linea:\t"+nL+"\tColumna:\t"+nC+"\tToken:\t"+token+"\t\t\t"+"Lexema:\t\""+lexema+"\"");
    }  
 
    private static void grabarDatosPieza(int n, String token, Token pieza) {

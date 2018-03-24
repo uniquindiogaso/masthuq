@@ -1,0 +1,15 @@
+ , . ,,#Asi escribimos los Comentarios##
+ <>[[]**#]*[@""#%%||&& 
+Escribe "hola@todos".
+Imprime, Lee Cadena	
+.{{} Retornar,
+14-3 & 41<=65
+
+#Ejemplo del programa#
+Entero p,q,.
+p:14
+q=3.
+Si p-q>10
+Escribir "P es mayor Sino Escribir "Q es mayor"
+
+-458
