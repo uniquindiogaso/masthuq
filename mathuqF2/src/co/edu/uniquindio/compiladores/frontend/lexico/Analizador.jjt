@@ -225,7 +225,7 @@ void imprimir():
 void imprimible():
 {}
 {
- condicionador()|contactenacion() 	
+ contactenacion() 	
 }
 
 void asignarVar():
@@ -236,7 +236,7 @@ void asignarVar():
 
 void tipoAsignacion():
 {}
-{
+{ 
   leer() | contactenacion() | operacionMat()
 }
 
@@ -254,8 +254,8 @@ void grupoCondiciones():
 
 void condicionador():
 {}
-{
-  <IDENTIFICADOR>|<ENTERO>
+{   
+  <IDENTIFICADOR>|<ENTERO>|<CADENA>
 }
 
 void leer():
@@ -297,7 +297,7 @@ void operadorMult():
 void contactenacion():
 {}
 {
-  <CADENA>[< CONCATENAR > <IDENTIFICADOR > contactenacion()] 
+  condicionador() [< CONCATENAR > condicionador()  contactenacion()]  
 }
 
 void tipoDato():
