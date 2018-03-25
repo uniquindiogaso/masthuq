@@ -1,0 +1,16 @@
+package co.edu.uniquindio.compiladores.utils;
+
+import java.util.ArrayList;
+
+public class Impresion {
+	
+	public static String ImprimirLexico(ArrayList<Variable> vars){
+		//System.out.println(n + ") Linea:\u005ct"+nL+"\u005ctColumna:\u005ct"+nC+"\u005ctLexema:\u005ct\u005c""+lexema+"\u005c"\u005ct"+"Token:\u005ct"+token);
+		String res = "";
+		for(Variable v : vars){
+			res+=  v.getNum() + ") Linea:\u005ct"+v.getPieza().beginLine+"\u005ctColumna:\u005ct"+v.getPieza().beginColumn+"\Lexema:\t\t"+ v.get +"\u005c"\u005ct"+"Token:\u005ct"+token
+		}
+		return "";
+	}
+
+}

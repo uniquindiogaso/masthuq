@@ -4,15 +4,21 @@
 options
 {
   static = true;
+  LOOKAHEAD= 1;
 }
 
 PARSER_BEGIN(Analizador)
 package co.edu.uniquindio.compiladores.frontend.lexico;
 
+import co.edu.uniquindio.compiladores.utils.Variable;
+import java.util.ArrayList;
+
 public class Analizador
 {
-
+		
    static int numero = 0;
+
+   private static ArrayList<Variable> variables;
 
    private static void grabarLexema (int n, String token,  String lexema, int nL, int nC) {
       //System.out.println(n + ") Token: \t"+  token + "\t\t\tLexema: \t\"" + lexema + "\" \tLinea: \t"+ nL + "\tColumna: \t" + nC);
@@ -20,9 +26,9 @@ public class Analizador
    }  
 
    private static void grabarDatosPieza(int n, String token, Token pieza) {
-      grabarLexema(n, token, pieza.image, pieza.beginLine, pieza.beginColumn );      
+      grabarLexema(n, token, pieza.image, pieza.beginLine, pieza.beginColumn );
+      variables.add(new Variable(n, token, pieza));      
    }
-
     
   public static void main(String args []) throws ParseException
   {
@@ -32,6 +38,7 @@ public class Analizador
 	   Analizador parser = new Analizador(System.in);
        parser.TokenList();
 
+	   	
        System.out.println("Analisis terminado:");
        System.out.println("No se han hallado errores léxicos");
        
@@ -56,11 +63,29 @@ public static void probarAnalizador(String nombreArchivo) throws ParseException 
 	} catch(java.io.FileNotFoundException e){
 		  System.out.println(e.getMessage());
 	}
-	  
-
-
   }
-  
+
+
+public void inicializarCompilador(String nombreArchivo) throws ParseException {
+  	try{
+  		Analizador parser = new Analizador(new java.io.FileInputStream(nombreArchivo));
+  		parser.TokenList();
+  		variables = new ArrayList<Variable> ();
+  		
+	} catch(java.io.FileNotFoundException e){
+		  System.out.println(e.getMessage());
+	}  
+}
+
+
+	public ArrayList<Variable> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(ArrayList<Variable> variables) {
+		this.variables = variables;
+	}
+
 }
 
 PARSER_END(Analizador)
@@ -237,7 +262,7 @@ void asignarVar():
 void tipoAsignacion():
 {}
 { 
-  leer() | contactenacion() | operacionMat()
+  leer() | LOOKAHEAD(2) contactenacion() | operacionMat()
 }
 
 void condicion():

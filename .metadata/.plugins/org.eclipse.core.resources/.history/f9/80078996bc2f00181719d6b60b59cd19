@@ -1,0 +1,47 @@
+package co.edu.uniquindio.compiladores.utils;
+
+import co.edu.uniquindio.compiladores.frontend.lexico.Token;
+
+public class Variable {
+
+	private int num;
+	private String token;
+	private Token pieza;
+	
+	public Variable(int num, String token, Token pieza) {
+		super();
+		this.num = num;
+		this.token = token;
+		this.pieza = pieza;
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Token getPieza() {
+		return pieza;
+	}
+
+	public void setPieza(Token pieza) {
+		this.pieza = pieza;
+	}
+	
+	
+	
+	
+	
+	
+}

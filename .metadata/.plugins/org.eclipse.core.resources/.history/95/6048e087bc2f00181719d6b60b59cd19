@@ -1,0 +1,11 @@
+package co.edu.uniquindio.compiladores.utils;
+
+import co.edu.uniquindio.compiladores.frontend.lexico.Token;
+
+public class Variable {
+
+	private int num;
+	private String token;
+	private Token pieza;
+	
+}

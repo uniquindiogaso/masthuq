@@ -1,0 +1,13 @@
+package co.edu.uniquindio.compiladores.utils;
+
+import java.util.ArrayList;
+
+public class Impresion {
+	
+	public static String ImprimirLexico(ArrayList<Variable> vars){
+		
+		return "";
+		
+	}
+
+}
