@@ -37,15 +37,15 @@ public class Analizador
 	try
 	{
 	  	errores = new ArrayList< ParseException > ();
-	   	System.out.println("Ingrese el código a analizar:");
+	   	System.out.println("Ingrese el codigo a analizar:");
 	   	Analizador analizador = new Analizador(System.in);
 	   	SimpleNode sNode = analizador.mathuq();
 	 	sNode.dump("");
        	//analizador.TokenList();
 
-	   System.out.println("Se ha compilado con éxito");
+	   System.out.println("Se ha compilado con exito");
        //System.out.println("Analisis terminado:");
-       //System.out.println("No se han hallado errores léxicos");
+       //System.out.println("No se han hallado errores lexicos");
        
        
     }catch(TokenMgrError te){
@@ -83,7 +83,7 @@ public void inicializarCompilador(String nombreArchivo) throws ParseException {
 
 
   private static void errorSaltar(int kind){    
-    ParseException error = generateParseException(); // se genera el objeto excepción
+    ParseException error = generateParseException(); // se genera el objeto excepcion
     System.out.println(" *errorSaltar* " + error.toString()); // se imprime el mensaje de error
 	//String msj = "Linea " +  error.currentToken.beginLine  + " Columna " + error.currentToken.beginColumn + " Encontrado " + error.tokenImage[0]   ;
     //System.out.println(" *errorSaltar* " + msj );   
@@ -284,34 +284,47 @@ void definirVar():
 void imprimir():
 {Token t;}
 {
+  try { 
   t=< PALABRA_RESERVADA_ESCRIBIR > {jjtThis.value = t.image;} #ESCRIBIR(true) t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) contactenacion() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+  }catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
+}
 }
 
 void asignarVar():
 {Token t;}
 {
+  try { 
   t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true) t=<ASIGNACION> {jjtThis.value = t.image;} #ASIGNACION(true)  tipoAsignacion() t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+}catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
+}
 }
 
-void tipoAsignacion():
+void tipoAsignacion() throws ParseException:
 {}
 { 
   leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
 }
 
+
 void condicion():
 {Token t;}
 {
+  try { 
   t=<PALABRA_RESERVADA_SI> {jjtThis.value = t.image;} #SI(true)  grupoCondiciones() t=<PALABRA_RESERVADA_ENTONCES> {jjtThis.value = t.image;} #ENTONCES(true)  listadoSentencias() [t=<PALABRA_RESERVADA_SINO> {jjtThis.value = t.image;} #SINO(true)  listadoSentencias()] t=<PALABRA_RESERVADA_FINSI> {jjtThis.value = t.image;} #FINSI(true) 
+}catch(ParseException e) {
+    errorSaltar(PALABRA_RESERVADA_FINSI);
+}
 }
 
-void grupoCondiciones():
+void grupoCondiciones() throws ParseException:
 {Token t;}
 {
   valor() t=<RELACIONALES> {jjtThis.value = t.image;} #OPERADOR_RELACIONAL(true) valor()
 }
 
-void valor():
+void valor() throws ParseException:
 {Token t;}
 {   
   t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)|t=<CADENA> {jjtThis.value = t.image;} #CADENA(true)
@@ -320,52 +333,56 @@ void valor():
 void leer():
 {Token t;}
 {
+  try { 
   t=<PALABRA_RESERVADA_LEER> {jjtThis.value = t.image;} #LEER(true)t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true)t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true)t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true) 
+}catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
+}
 }
 
-void operacionMat():
+void operacionMat() throws ParseException:
 {}
 {
  termino()(operadorAdicion() termino())*
 }
 
-void termino():
+void termino() throws ParseException:
 {}
 {
   factor()(operadorMult() factor())*
 }
 
-void factor():
+void factor() throws ParseException:
 {Token t;}
 {
   valor() | t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) operacionMat() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
 }
 
-void operadorAdicion():
+void operadorAdicion() throws ParseException:
 {Token t;}
 {
  t=<SUMA> {jjtThis.value = t.image;} #SUMA(true)|t=<SUSTRACCION> {jjtThis.value = t.image;} #SUSTRACCION(true)
 }
 
-void operadorMult():
+void operadorMult() throws ParseException:
 {Token t;}
 {
   t=<MULTIPLICACION> {jjtThis.value = t.image;} #SUMA(true)|t=<MODULO> {jjtThis.value = t.image;} #SUSTRACCION(true)|t=<DIVISION> {jjtThis.value = t.image;} #SUSTRACCION(true)
 }
 
-void contactenacion():
+void contactenacion() throws ParseException:
 {Token t;}
 {
   valor() (t=<CONCATENAR> {jjtThis.value = t.image;} #CONCATENAR(true) valor())*  
 }
 
-void tipoDato():
+void tipoDato() throws ParseException:
 {Token t;}
 {
   t=<PALABRA_RESERVADA_CADENA> {jjtThis.value = t.image;} #CADENA(true) | t=<PALABRA_RESERVADA_NUMERO> {jjtThis.value = t.image;} #NUMERO(true) 
 }
 
-void listadoIdentificadores():
+void listadoIdentificadores() throws ParseException:
 {Token t;}
 {
   t= <IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)  (t= <SEPARADOR> {jjtThis.value = t.image;} #SEPARADOR(true) t= <IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true))*
