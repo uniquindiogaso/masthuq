@@ -2,16 +2,21 @@ package analizadorlx.ui;
 
 import analizadorlx.utilidades.Archivos;
 import co.edu.uniquindio.compiladores.frontend.lexico.Analizador;
+import co.edu.uniquindio.compiladores.frontend.lexico.Node;
 import co.edu.uniquindio.compiladores.frontend.lexico.ParseException;
+import co.edu.uniquindio.compiladores.frontend.lexico.SimpleNode;
+import co.edu.uniquindio.compiladores.frontend.lexico.TokenMgrError;
+import co.edu.uniquindio.compiladores.utils.Impresion;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  * Ventana del analizador lexico
@@ -37,6 +42,8 @@ public class Ventana extends javax.swing.JFrame {
     //Ruta Archivo
     String rutaArchivo = "";
 
+    private DefaultMutableTreeNode raiz = new DefaultMutableTreeNode("Estructura");
+
     /**
      * Metodo constructor de la ventana
      */
@@ -45,9 +52,9 @@ public class Ventana extends javax.swing.JFrame {
 
         setTitle(tituloVentana);
         setLocationRelativeTo(null);
-        
+
         archivoManager = new Archivos();
-        jTxtAreaErrores.setForeground(Color.blue);
+        jTxtAreaConsola.setForeground(Color.blue);
 
     }
 
@@ -64,10 +71,10 @@ public class Ventana extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         cEditor = new javax.swing.JTextPane();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTxtAreaErrores = new javax.swing.JTextArea();
+        jTxtAreaConsola = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        arbol = new javax.swing.JTree();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         bAnalizar = new javax.swing.JMenuItem();
@@ -87,13 +94,20 @@ public class Ventana extends javax.swing.JFrame {
         jScrollPane1.setViewportView(cEditor);
         jScrollPane1.setRowHeaderView( tln );
 
-        jTxtAreaErrores.setColumns(20);
-        jTxtAreaErrores.setRows(5);
-        jScrollPane4.setViewportView(jTxtAreaErrores);
+        jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane4.setAutoscrolls(true);
 
-        jLabel1.setText("Errores");
+        jTxtAreaConsola.setColumns(20);
+        jTxtAreaConsola.setLineWrap(true);
+        jTxtAreaConsola.setRows(5);
+        jTxtAreaConsola.setTabSize(2);
+        jScrollPane4.setViewportView(jTxtAreaConsola);
 
-        jScrollPane3.setViewportView(jTree1);
+        jLabel1.setText("Consola");
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Arbol BNF");
+        arbol.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane3.setViewportView(arbol);
 
         jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/inicio.png"))); // NOI18N
         jMenu1.setText("Archivo");
@@ -108,7 +122,7 @@ public class Ventana extends javax.swing.JFrame {
         jMenu1.add(bAnalizar);
 
         mCargar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/abrir.png"))); // NOI18N
-        mCargar.setText("Cargar SQL");
+        mCargar.setText("Cargar Archivo");
         mCargar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mCargarActionPerformed(evt);
@@ -167,17 +181,17 @@ public class Ventana extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap(30, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 857, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addComponent(jLabel1)
+                .addContainerGap(848, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jScrollPane4)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,7 +206,7 @@ public class Ventana extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addGap(5, 5, 5)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -200,18 +214,20 @@ public class Ventana extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAnalizarActionPerformed
+
         analizar();
+
     }//GEN-LAST:event_bAnalizarActionPerformed
 
     private void mCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mCargarActionPerformed
-        jTxtAreaErrores.setText("");
+        jTxtAreaConsola.setText("");
         cEditor.setText("");
         abrirJFileChooser();
     }//GEN-LAST:event_mCargarActionPerformed
 
     private void mGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mGuardarActionPerformed
         if (!cEditor.getText().isEmpty()) {
-           GuardarJFileChooser(false);
+            GuardarJFileChooser(false);
         } else {
             JOptionPane.showMessageDialog(null, "Editor vacio, para guardar un archivo debe escribir codigo!");
         }
@@ -231,6 +247,7 @@ public class Ventana extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTree arbol;
     private javax.swing.JMenuItem bAnalizar;
     private javax.swing.JTextPane cEditor;
     private javax.swing.JLabel jLabel1;
@@ -242,8 +259,7 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JTree jTree1;
-    private javax.swing.JTextArea jTxtAreaErrores;
+    private javax.swing.JTextArea jTxtAreaConsola;
     private javax.swing.JMenuItem mAcercaDe;
     private javax.swing.JMenuItem mCargar;
     private javax.swing.JMenuItem mGuardar;
@@ -251,26 +267,63 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JMenuItem mSalir;
     // End of variables declaration//GEN-END:variables
 
-
+    public void generarArbol(DefaultMutableTreeNode raiz, Node padre) {
+        for (int i = 0; i < padre.jjtGetNumChildren(); i++) {
+            Node nuevoPadre = padre.jjtGetChild(i);
+            String finales = nuevoPadre.toString();
+            if (nuevoPadre.jjtGetNumChildren() == 0) {
+                finales += "(" + ((SimpleNode) nuevoPadre).jjtGetValue().toString() + ")";
+            }
+            DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(finales);
+            generarArbol(nodo, nuevoPadre);
+            raiz.add(nodo);
+        }
+    }
 
     /**
      * Analiza los tokens del archivo
      */
     private void analizar() {
         if (permitirAnalizar) {
-            //Borrar consola cuando se inicia el analisis 
-            jTxtAreaErrores.setText("");
-
             try {
-                Analizador.probarAnalizador(rutaArchivo);
-                
-                
-                
-                //Analizador.re
-                
-                //cEditor.getText().trim()
-            } catch (ParseException ex) {
-                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+                //Borrar consola cuando se inicia el analisis
+                jTxtAreaConsola.setText("");
+
+                Analizador anal = new Analizador(new java.io.FileInputStream(rutaArchivo));
+                anal.init();
+                anal.obtenerListadoTokens();
+                String txtConsola = Impresion.ImprimirLexico(anal.getVariables());
+
+                anal.ReInit(new java.io.FileInputStream(rutaArchivo));
+                SimpleNode nodo = anal.mathuq();
+                System.out.println("anal.getErrores().size() " + anal.getErrores().size());
+
+                if (anal.getErrores().isEmpty()) {
+                    System.out.println("Nodo Principal  " + nodo);
+                    System.out.println("Nodo Hijos " + nodo.jjtGetNumChildren());
+                    generarArbol(raiz, nodo);
+                    DefaultTreeModel modelo = new DefaultTreeModel(raiz);
+                    arbol.setModel(modelo);
+                    colorConsola(Color.BLUE);
+                    jTxtAreaConsola.setText(txtConsola);
+                }else{
+                    colorConsola(Color.RED);
+                    txtConsola = Impresion.imprimirErrores(anal.getErrores());
+                    jTxtAreaConsola.setText(txtConsola);
+                    
+                    DefaultMutableTreeNode raizError = new DefaultMutableTreeNode("No Arbol");
+                    DefaultTreeModel modelo = new DefaultTreeModel(raizError);
+                    arbol.setModel(modelo);
+                }
+            } catch (TokenMgrError te) {
+                System.out.println("Se han encontrado errores lexicos.");
+                System.out.println(te.getMessage());
+            } catch (ParseException e) {
+                System.out.println("Analizador: Se han encontrado errores en Parse.");
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Analizador: Error General");
+                System.out.println(e.getMessage());
             }
 
         } else {
@@ -284,7 +337,7 @@ public class Ventana extends javax.swing.JFrame {
      */
     private void abrirJFileChooser() {
         JFileChooser fileChoser = new JFileChooser();
-       // FileNameExtensionFilter filtro = new FileNameExtensionFilter(".ssql", "SSQL", "*.ssql");
+        // FileNameExtensionFilter filtro = new FileNameExtensionFilter(".ssql", "SSQL", "*.ssql");
         //fileChoser.setFileFilter(filtro);
         fileChoser.showOpenDialog(this);
 
@@ -369,4 +422,9 @@ public class Ventana extends javax.swing.JFrame {
                 + "Devs:\n"
                 + "Gustavo Salgado");
     }
+    
+    private void colorConsola(Color color){
+        jTxtAreaConsola.setForeground(color);
+    }
+    
 }

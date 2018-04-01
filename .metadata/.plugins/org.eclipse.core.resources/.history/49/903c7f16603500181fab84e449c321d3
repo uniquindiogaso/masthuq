@@ -1,0 +1,462 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  static = false;
+  LOOKAHEAD= 1;
+}
+
+PARSER_BEGIN(Analizador)
+package co.edu.uniquindio.compiladores.frontend.lexico;
+
+import co.edu.uniquindio.compiladores.utils.Variable;
+import java.util.ArrayList;
+
+public class Analizador
+{
+		
+   static int numero = 0;
+
+   public  ArrayList<Variable> variables = new ArrayList< Variable >();
+   public  ArrayList<ParseException> errores =  new ArrayList< ParseException > ();
+   public  SimpleNode nodoPrincipal;
+
+   private  void grabarLexema (int n, String token,  String lexema, int nL, int nC) {
+      //System.out.println(n + ") Token: \t"+  token + "\t\t\tLexema: \t\"" + lexema + "\" \tLinea: \t"+ nL + "\tColumna: \t" + nC);
+      System.out.println(n + ") Linea:\t"+nL+"\tColumna:\t"+nC+"\tLexema:\t\""+lexema+"\"\t"+"Token:\t"+token);
+   }  
+
+   private  void grabarDatosPieza(int n, String token, Token pieza) {
+      grabarLexema(n, token, pieza.image, pieza.beginLine, pieza.beginColumn );
+      variables.add(new Variable(n, token, pieza));      
+   }
+    
+  public static void main(String args []) throws ParseException
+  {
+	try
+	{
+	  	//errores = new ArrayList< ParseException > ();
+	   	//System.out.println("Ingrese el codigo a analizar:");
+	   	Analizador analizador = new Analizador(System.in);
+	   	nodoPrincipal = analizador.mathuq();
+	 	nodoPrincipal.dump("");
+       	analizador.obtenerListadoTokens();
+
+       	System.out.println(" Nodo " + nodoPrincipal);
+	 	System.out.println("Nodo Hijos " + nodoPrincipal.jjtGetNumChildren());
+
+	   //System.out.println("Se ha compilado con exito");
+       //System.out.println("Analisis terminado:");
+       //System.out.println("No se han hallado errores lexicos");
+       
+       
+    }catch(TokenMgrError te){
+	   System.out.println("Se han encontrado errores lexicos.");	   
+	   System.out.println(te.getMessage());	   
+	}catch(ParseException e){ 
+	   System.out.println("Analizador: Se han encontrado errores en Parse.");
+	   System.out.println(e.getMessage());	   
+	}catch(Exception e){ 
+	   System.out.println("Analizador: Error General");
+	   System.out.println(e.getMessage());	   
+	}    
+  }
+
+  public Analizador() {
+  }
+
+public  void probarAnalizador(String nombreArchivo) throws ParseException {
+	try{
+  		Analizador parser = new Analizador(new java.io.FileInputStream(nombreArchivo));
+  		parser.obtenerListadoTokens();
+	} catch(java.io.FileNotFoundException e){
+		  System.out.println(e.getMessage());
+	}
+  }
+
+
+public  void inicializarCompilador(String nombreArchivo) throws ParseException {
+  	try{  		
+	   	//System.out.println("Ingrese el codigo a analizar:");
+
+	   	
+	   	Analizador analizador = new Analizador(new java.io.FileInputStream(nombreArchivo));
+	   	analizador.obtenerListadoTokens();
+	   	analizador.nodoPrincipal = analizador.mathuq();
+	 	//nodoPrincipal.dump("");
+
+		System.out.println("JAR) Nodo " + analizador.nodoPrincipal);
+	 	System.out.println("JAR) Nodo Hijos " + analizador.nodoPrincipal.jjtGetNumChildren());       	
+
+	   System.out.println("Se ha compilado con exito");
+       //System.out.println("Analisis terminado:");
+       //System.out.println("No se han hallado errores lexicos");      
+       
+    }catch(java.io.FileNotFoundException e){
+		  System.out.println(e.getMessage());
+	}catch(TokenMgrError te){
+	   System.out.println("Se han encontrado errores lexicos.");	   
+	   System.out.println(te.getMessage());	   
+	}catch(ParseException e){ 
+	   System.out.println("Analizador: Se han encontrado errores en Parse.");
+	   System.out.println(e.getMessage());	   
+	}catch(Exception e){ 
+	   System.out.println("Analizador: Error General");
+	   System.out.println(e.getMessage());	   
+	}  
+}
+
+
+  private  void errorSaltar(int kind){    
+    ParseException error = generateParseException(); // se genera el objeto excepcion
+    System.out.println(" *errorSaltar* " + error.toString()); // se imprime el mensaje de error
+	//String msj = "Linea " +  error.currentToken.beginLine  + " Columna " + error.currentToken.beginColumn + " Encontrado " + error.tokenImage[0]   ;
+    //System.out.println(" *errorSaltar* " + msj );   
+    errores.add(error);
+    Token t;
+    do{
+      t = getNextToken();
+    }
+    while (t.kind != kind);
+  }
+
+	public ArrayList<Variable> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(ArrayList<Variable> variables) {
+		this.variables = variables;
+	}
+
+	public ArrayList<ParseException> getErrores() {
+		return errores;
+	}
+
+	public void setErrores(ArrayList<ParseException> errores) {
+		this.errores = errores;
+	}	
+
+
+
+
+}
+
+PARSER_END(Analizador)
+
+/* Espacio en blanco, saltos de linea, tabulares */
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+TOKEN : /*PALABRA RESERVADA LEER*/
+{
+  < PALABRA_RESERVADA_LEER: "Leer" >
+}
+TOKEN : /*PALABRA RESERVADA ESCRIBIR*/
+{
+  < PALABRA_RESERVADA_ESCRIBIR: "Escribir" >
+}
+TOKEN : /*PALABRA RESERVADA SI*/
+{
+  < PALABRA_RESERVADA_SI: "Si" >
+}
+TOKEN : /*PALABRA RESERVADA SINO*/
+{
+  < PALABRA_RESERVADA_SINO: "Sino" >
+}
+TOKEN : /*PALABRA RESERVADA FINSI*/
+{
+  < PALABRA_RESERVADA_FINSI: "Finsi" >
+}
+TOKEN : /*PALABRA RESERVADA ENTONCES*/
+{
+  < PALABRA_RESERVADA_ENTONCES: "Entonces" >
+}
+TOKEN : /*PALABRA RESERVADA MIENTRAS*/
+{
+  < PALABRA_RESERVADA_MIENTRAS: "Mientras" >
+}
+TOKEN : /*PALABRA RESERVADA RETORNAR*/
+{
+  < PALABRA_RESERVADA_RETORNAR: "Retornar" >
+}
+TOKEN : /*PALABRA RESERVADA ENTERO*/
+{
+  < PALABRA_RESERVADA_NUMERO: "Numero" >
+}
+TOKEN : /*PALABRA RESERVADA LOGICO*/
+{
+  < PALABRA_RESERVADA_LOGICO: "Logico" >
+}
+TOKEN : /*PALABRA RESERVADA CADENA*/
+{
+  < PALABRA_RESERVADA_CADENA: "Cadena" >
+}
+TOKEN : /*PALABRA RESERVADA IMPRIMIR*/
+{
+  < PALABRA_RESERVADA_IMPRIMIR: "Imprimir" >
+}
+TOKEN : /* ASIGNACION*/
+{
+  < ASIGNACION : "=" >
+}
+TOKEN : /*NUMEROS EJEMPLO 1, 1234, 987*/
+{
+  < ENTERO : (< DIGIT >)+ | "-"(< DIGIT >)+ >
+| < #DIGIT : [ "0"-"9" ] >
+}
+TOKEN : /*CONCATENAR*/
+{
+  < CONCATENAR : "@" >
+}
+TOKEN : /* SEPARADOR*/
+{
+  < SEPARADOR : "," >
+}
+TOKEN : /*IDENTIFICADORES EJEMPLO a, casa, clase1*/
+{
+  < IDENTIFICADOR :["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9","_"] )* >
+} 
+
+TOKEN : /* FIN DE LINEA*/
+{
+  < FIN_LINEA : "." >
+}
+
+TOKEN : /* ABRIR CORCHETE*/
+{
+  < ABRIR_CORCHETE : "[" >
+}
+
+TOKEN : /* CERRAR CORCHETE*/
+{
+  < CERRAR_CORCHETE : "]" >
+}
+TOKEN : /* ABRIR LLAVE*/
+{
+  < ABRIR_LLAVE : "{" >
+}
+TOKEN : /* CERRAR LLAVE*/
+{
+  < CERRAR_LLAVE : "}" >
+}
+TOKEN : /* OPERATORS SUSTRACCION*/
+{
+  < SUMA : "+" >
+| < MULTIPLICACION : "*" >
+| < MODULO : "%" >
+| < SUSTRACCION : "-" >
+| < DIVISION : "/" >
+}
+TOKEN : /*LOGICOS*/
+{
+  < LOGICOS :"&"|"|" >
+}
+TOKEN : /*RELACIONALES*/
+{
+  < RELACIONALES :"<"|">"|" >="|"<="|"<>"|"=="|"!=" >
+}
+TOKEN : /*COMENTARIO*/
+{
+  < COMENTARIO :"##"(~["#"])*"##" >
+}
+TOKEN : /*CADENA*/
+{
+  < CADENA :"\""(~["\""])*"\"" >
+}
+
+TOKEN : /*CADENA*/
+{
+  <FINARCH: "?">
+}
+
+SimpleNode mathuq():
+{}
+{
+	( listadoSentencias() ) *
+	< EOF > { return jjtThis; }	
+}
+
+void listadoSentencias() throws ParseException:
+{}
+{
+  instruccion() 
+}
+
+void instruccion() throws ParseException:
+{}
+{
+  definirVar() | imprimir() | asignarVar() | condicion()
+}
+
+void definirVar():
+{Token t;}
+{
+  try { 
+  	tipoDato()t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)[t=<SEPARADOR> {jjtThis.value = t.image;} #SEPARADOR(true)listadoIdentificadores()]t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+  }catch(ParseException e) {
+	errorSaltar(FIN_LINEA);
+  }	 	
+  
+}
+
+void imprimir():
+{Token t;}
+{
+  try { 
+  t=< PALABRA_RESERVADA_ESCRIBIR > {jjtThis.value = t.image;} #ESCRIBIR(true) t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) contactenacion() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+  }catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
+}
+}
+
+void asignarVar():
+{Token t;}
+{
+  try { 
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true) t=<ASIGNACION> {jjtThis.value = t.image;} #ASIGNACION(true)  tipoAsignacion() t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+}catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
+}
+}
+
+void tipoAsignacion() throws ParseException:
+{}
+{ 
+  leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
+}
+
+
+void condicion():
+{Token t;}
+{
+  try { 
+  t=<PALABRA_RESERVADA_SI> {jjtThis.value = t.image;} #SI(true)  grupoCondiciones() t=<PALABRA_RESERVADA_ENTONCES> {jjtThis.value = t.image;} #ENTONCES(true)  listadoSentencias() [t=<PALABRA_RESERVADA_SINO> {jjtThis.value = t.image;} #SINO(true)  listadoSentencias()] t=<PALABRA_RESERVADA_FINSI> {jjtThis.value = t.image;} #FINSI(true) 
+}catch(ParseException e) {
+    errorSaltar(PALABRA_RESERVADA_FINSI);
+}
+}
+
+void grupoCondiciones() throws ParseException:
+{Token t;}
+{
+  valor() t=<RELACIONALES> {jjtThis.value = t.image;} #OPERADOR_RELACIONAL(true) valor()
+}
+
+void valor() throws ParseException:
+{Token t;}
+{   
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)|t=<CADENA> {jjtThis.value = t.image;} #CADENA(true)
+}
+
+void leer():
+{Token t;}
+{
+  try { 
+  t=<PALABRA_RESERVADA_LEER> {jjtThis.value = t.image;} #LEER(true)t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true)t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true)t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true) 
+}catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
+}
+}
+
+void operacionMat() throws ParseException:
+{}
+{
+ termino()(operadorAdicion() termino())*
+}
+
+void termino() throws ParseException:
+{}
+{
+  factor()(operadorMult() factor())*
+}
+
+void factor() throws ParseException:
+{Token t;}
+{
+  valor() | t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) operacionMat() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
+}
+
+void operadorAdicion() throws ParseException:
+{Token t;}
+{
+ t=<SUMA> {jjtThis.value = t.image;} #SUMA(true)|t=<SUSTRACCION> {jjtThis.value = t.image;} #SUSTRACCION(true)
+}
+
+void operadorMult() throws ParseException:
+{Token t;}
+{
+  t=<MULTIPLICACION> {jjtThis.value = t.image;} #SUMA(true)|t=<MODULO> {jjtThis.value = t.image;} #SUSTRACCION(true)|t=<DIVISION> {jjtThis.value = t.image;} #SUSTRACCION(true)
+}
+
+void contactenacion() throws ParseException:
+{Token t;}
+{
+  valor() (t=<CONCATENAR> {jjtThis.value = t.image;} #CONCATENAR(true) valor())*  
+}
+
+void tipoDato() throws ParseException:
+{Token t;}
+{
+  t=<PALABRA_RESERVADA_CADENA> {jjtThis.value = t.image;} #CADENA(true) | t=<PALABRA_RESERVADA_NUMERO> {jjtThis.value = t.image;} #NUMERO(true) 
+}
+
+void listadoIdentificadores() throws ParseException:
+{Token t;}
+{
+  t= <IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)  (t= <SEPARADOR> {jjtThis.value = t.image;} #SEPARADOR(true) t= <IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true))*
+}
+  
+
+/**
+ * Reconoce el contenido completo de un archivo
+ *
+ * TokenList -> (TokenElement)* 
+ */
+void obtenerListadoTokens():
+{}
+{ 
+  ( TokenElement() )*  
+}
+
+private void TokenElement():
+{Token pieza; }
+{  
+ pieza = <PALABRA_RESERVADA_LEER> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA LEER", pieza); }
+| pieza = <PALABRA_RESERVADA_ESCRIBIR> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ESCRIBIR", pieza); }
+| pieza = <PALABRA_RESERVADA_SI> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA SI", pieza); }
+| pieza = <PALABRA_RESERVADA_SINO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA SINO", pieza); }
+| pieza = <PALABRA_RESERVADA_FINSI> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA FINSI", pieza); }
+| pieza = <PALABRA_RESERVADA_ENTONCES> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTONCES", pieza); }  
+| pieza = <PALABRA_RESERVADA_MIENTRAS> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA MIENTRAS", pieza); }
+| pieza = <PALABRA_RESERVADA_RETORNAR> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA RETORNAR", pieza); }
+| pieza = <PALABRA_RESERVADA_NUMERO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTERO", pieza); }
+| pieza = <PALABRA_RESERVADA_LOGICO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA LOGICO", pieza); }
+| pieza = <PALABRA_RESERVADA_CADENA> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA CADENA", pieza); }
+| pieza = <PALABRA_RESERVADA_IMPRIMIR> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA IMPRIMIR", pieza); }
+| pieza = <ASIGNACION> { numero++; grabarDatosPieza(numero, "ASIGNACION", pieza); }
+| pieza = <ENTERO> { numero++; grabarDatosPieza(numero, "ENTERO", pieza); }
+| pieza = <CONCATENAR> { numero++; grabarDatosPieza(numero, "CONCATENAR", pieza); }
+| pieza = <SEPARADOR> { numero++; grabarDatosPieza(numero, "SEPARADOR", pieza); }
+| pieza = <IDENTIFICADOR> { numero++; grabarDatosPieza(numero, "IDENTIFICADOR", pieza); }
+| pieza = <FIN_LINEA> { numero++; grabarDatosPieza(numero, "FIN LINEA", pieza); }
+| pieza = <ABRIR_CORCHETE> { numero++; grabarDatosPieza(numero, "ABRIR CORCHETE", pieza); }
+| pieza = <CERRAR_CORCHETE> { numero++; grabarDatosPieza(numero, "CERRAR CORCHETE", pieza); }
+| pieza = <ABRIR_LLAVE> { numero++; grabarDatosPieza(numero, "ABRIR LLAVE", pieza); }
+| pieza = <CERRAR_LLAVE> { numero++; grabarDatosPieza(numero, "CERRAR LLAVE", pieza); }
+| pieza = <SUMA> { numero++; grabarDatosPieza(numero, "SUMA" , pieza); }
+| pieza = <MULTIPLICACION> { numero++; grabarDatosPieza(numero, "MULTIPLICACION", pieza); }
+| pieza = <MODULO> { numero++; grabarDatosPieza(numero, "MODULO", pieza); }
+| pieza = <SUSTRACCION> { numero++; grabarDatosPieza(numero, "SUSTRACCION", pieza); }
+| pieza = <DIVISION> { numero++; grabarDatosPieza(numero, "DIVISION", pieza); }
+| pieza = <LOGICOS> { numero++; grabarDatosPieza(numero, "LOGICO", pieza); }
+| pieza = <RELACIONALES> { numero++; grabarDatosPieza(numero, "RELACIONALES", pieza); }
+| pieza = <COMENTARIO> { numero++; grabarDatosPieza(numero, "COMENTARIO", pieza); }
+| pieza = <CADENA> { numero++; grabarDatosPieza(numero, "CADENA", pieza); }
+}
