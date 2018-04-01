@@ -318,7 +318,7 @@ void asignarVar():
 void tipoAsignacion() throws ParseException:
 {}
 { 
-  leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
+  contactenacion() | leer() | operacionMat()
 }
 
 
@@ -344,14 +344,10 @@ void valor() throws ParseException:
   t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)|t=<CADENA> {jjtThis.value = t.image;} #CADENA(true)
 }
 
-void leer():
+void leer() throws ParseException:
 {Token t;}
 {
-  try { 
-  t=<PALABRA_RESERVADA_LEER> {jjtThis.value = t.image;} #LEER(true)t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true)t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true)t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true) 
-}catch(ParseException e) {
-    errorSaltar(FIN_LINEA);
-}
+  t=<PALABRA_RESERVADA_LEER> {jjtThis.value = t.image;} #LEER(true)t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true)t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
 }
 
 void operacionMat() throws ParseException:
