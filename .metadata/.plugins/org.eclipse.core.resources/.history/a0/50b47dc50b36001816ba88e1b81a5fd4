@@ -28,7 +28,7 @@ public class Impresion {
 		int num = 0;
 		for (ParseException error : errores) {
 			num++;
-			res += num+") Error en Linea: " + error.currentToken.beginLine + " Columna: " + error.currentToken.endColumn
+			res += num+") Error en Linea: " + error.currentToken.beginLine + " Columna: " + error.currentToken.beginColumn
 					+ " Encontrado: \"" + error.currentToken.next + "\" Esperado: " + tokensEsperados(error).toString() + "\n";
 		}
 		return res;

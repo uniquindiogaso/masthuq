@@ -316,7 +316,7 @@ public class Ventana extends javax.swing.JFrame {
                     arbol.setModel(modelo);
                 }
             } catch (TokenMgrError te) {
-                System.out.println("Se han encontrado errores lexicos.");
+                System.out.println("GUI - Se han encontrado errores lexicos.");
                 System.out.println(te.getMessage());
             } catch (ParseException e) {
                 System.out.println("Analizador: Se han encontrado errores en Parse.");

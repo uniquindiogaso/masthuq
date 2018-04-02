@@ -268,8 +268,14 @@ TOKEN : /*CADENA*/
 SimpleNode mathuq():
 {}
 {
-	( instruccion() ) *
+	( listadoSentencias() ) *
 	< EOF > { return jjtThis; }	
+}
+
+void listadoSentencias() throws ParseException:
+{}
+{
+  instruccion() 
 }
 
 void instruccion() throws ParseException:
@@ -312,7 +318,7 @@ void asignarVar():
 void tipoAsignacion() throws ParseException:
 {}
 { 
-  LOOKAHEAD(2) contactenacion() | leer() | operacionMat()
+  contactenacion() | leer() | operacionMat()
 }
 
 
@@ -320,7 +326,7 @@ void condicion():
 {Token t;}
 {
   try { 
-  t=<PALABRA_RESERVADA_SI> {jjtThis.value = t.image;} #SI(true)  grupoCondiciones() t=<PALABRA_RESERVADA_ENTONCES> {jjtThis.value = t.image;} #ENTONCES(true)  instruccion() [t=<PALABRA_RESERVADA_SINO> {jjtThis.value = t.image;} #SINO(true)  instruccion()] t=<PALABRA_RESERVADA_FINSI> {jjtThis.value = t.image;} #FINSI(true) 
+  t=<PALABRA_RESERVADA_SI> {jjtThis.value = t.image;} #SI(true)  grupoCondiciones() t=<PALABRA_RESERVADA_ENTONCES> {jjtThis.value = t.image;} #ENTONCES(true)  listadoSentencias() [t=<PALABRA_RESERVADA_SINO> {jjtThis.value = t.image;} #SINO(true)  listadoSentencias()] t=<PALABRA_RESERVADA_FINSI> {jjtThis.value = t.image;} #FINSI(true) 
 }catch(ParseException e) {
     errorSaltar(PALABRA_RESERVADA_FINSI);
 }
