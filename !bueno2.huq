@@ -1,0 +1,18 @@
+Numero suma, resta,div.
+suma=[5+2].
+resta=[6/2].
+div=-3.
+Cadena msj.
+msj="Hola Mundo".
+Escribir[msj].
+
+Escribir["Iniciando condicion: "].
+Si suma < resta Entonces
+ Escribir["El número "@5@"Es mayor que "@1].	
+Sino
+ Escribir["El número "@69@"Es mayor que "@4].
+Finsi
+Numero result.
+result =a.
+Escribir["El Resultado es"@result].
+##Otro Programa de Ejemplo##

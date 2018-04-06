@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="co.edu.uniquindio.compiladores.frontend.lexico.Token"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="co.edu.uniquindio.compiladores.utils.Variable"/>
+</qualifiedTypeNameHistroy>

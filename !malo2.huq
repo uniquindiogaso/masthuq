@@ -1,0 +1,14 @@
+a= 33.
+gaso = -696969.
+x=a
+Numero a, b. d.
+Cadena c. 
+
+Escribir["Por favor digite su nombre##"]. 
+c=Leer["algo"].
+
+Escribir["Por favor ingrese el numero a"]. 
+a=Leer[].
+
+Escribir["Por favor ingrese el numero b"@].
+b=Leer[].

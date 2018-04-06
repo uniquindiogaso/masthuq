@@ -1,0 +1,2 @@
+x=b,
+Escribir["Hola puto mundo"].

@@ -3,64 +3,113 @@
  */
 options
 {
-  static = true;
+  static = false;
+  LOOKAHEAD= 1;
 }
 
 PARSER_BEGIN(Analizador)
 package co.edu.uniquindio.compiladores.frontend.lexico;
 
+import co.edu.uniquindio.compiladores.utils.Variable;
+import java.util.ArrayList;
+
 public class Analizador
 {
+		
+   private int numero = 0;
 
-   static int numero = 0;
+   private ArrayList<Variable> variables;
+   private ArrayList<ParseException> errores;   
 
-   private static void grabarLexema (int n, String token,  String lexema, int nL, int nC) {
-      //System.out.println(n + ") Token: \t"+  token + "\t\t\tLexema: \t\"" + lexema + "\" \tLinea: \t"+ nL + "\tColumna: \t" + nC);
+   private static void grabarLexema (int n, String token,  String lexema, int nL, int nC) {    
       System.out.println(n + ") Linea:\t"+nL+"\tColumna:\t"+nC+"\tLexema:\t\""+lexema+"\"\t"+"Token:\t"+token);
    }  
 
-   private static void grabarDatosPieza(int n, String token, Token pieza) {
-      grabarLexema(n, token, pieza.image, pieza.beginLine, pieza.beginColumn );      
+   private void grabarDatosPieza(int n, String token, Token pieza) {     
+      variables.add(new Variable(n, token, pieza));      
    }
 
+   public void init() {
+		variables = new ArrayList< Variable >();
+		errores =  new ArrayList< ParseException > (); 
+    }
     
   public static void main(String args []) throws ParseException
   {
 	try
 	{
-	   System.out.println("Ingrese el código a analizar:");
-	   Analizador parser = new Analizador(System.in);
-       parser.TokenList();
+	   	Analizador analizador = new Analizador(System.in);
+	   	SimpleNode nodoPrincipal = analizador.mathuq();
+	 	nodoPrincipal.dump("");
+       	analizador.obtenerListadoTokens();
 
-       System.out.println("Analisis terminado:");
-       System.out.println("No se han hallado errores léxicos");
+       	System.out.println(" Nodo " + nodoPrincipal);
+	 	System.out.println("Nodo Hijos " + nodoPrincipal.jjtGetNumChildren());      
        
-       
-    }catch(TokenMgrError te)
-	{
+    }catch(TokenMgrError te){
 	   System.out.println("Se han encontrado errores lexicos.");	   
-	   System.out.println(te.getMessage());
-	   
-	} 
-    catch(ParseException e)
-	{
-	   System.out.println("Analizador: Se han encontrado errores en el analisis.");
+	   System.out.println(te.getMessage());	   
+	}catch(ParseException e){ 
+	   System.out.println("Analizador: Se han encontrado errores en Parse.");
+	   System.out.println(e.getMessage());	   
+	}catch(Exception e){ 
+	   System.out.println("Analizador: Error General");
 	   System.out.println(e.getMessage());	   
 	}    
   }
 
-public static void probarAnalizador(String nombreArchivo) throws ParseException {
+public void probarAnalizador(String nombreArchivo) throws ParseException {
 	try{
   		Analizador parser = new Analizador(new java.io.FileInputStream(nombreArchivo));
-  		parser.TokenList();
+  		parser.obtenerListadoTokens();
 	} catch(java.io.FileNotFoundException e){
 		  System.out.println(e.getMessage());
 	}
-	  
-
-
   }
+
+
+public void inicializarCompilador(String nombreArchivo) throws java.io.FileNotFoundException,TokenMgrError , ParseException, Exception {
+	
+	   System.out.println("##############################################");
+	   System.out.println("# Compilador para MathUQ Inicializandoce ....#");
+	   System.out.println("##############################################");
+	   System.out.println("");
+	   Analizador analizador = new Analizador(new java.io.FileInputStream(nombreArchivo));
+	   System.out.println("Compilador ok ... ");  
   
+}
+
+
+  private void errorSaltar(int kind){    
+    ParseException error = generateParseException(); // se genera el objeto excepcion
+    System.out.println(" *errorSaltar* " + error.toString()); // se imprime el mensaje de error
+    errores.add(error);
+    Token t;
+    do{
+      t = getNextToken();
+    }
+    while (t.kind != kind && t.kind != AnalizadorConstants.EOF);
+  }
+
+	public ArrayList<Variable> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(ArrayList<Variable> variables) {
+		this.variables = variables;
+	}
+
+	public ArrayList<ParseException> getErrores() {
+		return errores;
+	}
+
+	public void setErrores(ArrayList<ParseException> errores) {
+		this.errores = errores;
+	}	
+
+
+
+
 }
 
 PARSER_END(Analizador)
@@ -73,6 +122,7 @@ SKIP :
 | "\n"
 | "\r"
 | "\f"
+| < COMENTARIO :"##"(~["#"])*"##" >
 }
 
 TOKEN : /*PALABRA RESERVADA LEER*/
@@ -109,7 +159,7 @@ TOKEN : /*PALABRA RESERVADA RETORNAR*/
 }
 TOKEN : /*PALABRA RESERVADA ENTERO*/
 {
-  < PALABRA_RESERVADA_ENTERO: "Entero" >
+  < PALABRA_RESERVADA_NUMERO: "Numero" >
 }
 TOKEN : /*PALABRA RESERVADA LOGICO*/
 {
@@ -183,133 +233,141 @@ TOKEN : /*RELACIONALES*/
 {
   < RELACIONALES :"<"|">"|" >="|"<="|"<>"|"=="|"!=" >
 }
-TOKEN : /*COMENTARIO*/
-{
-  < COMENTARIO :"##"(~["#"])*"##" >
-}
 TOKEN : /*CADENA*/
 {
   < CADENA :"\""(~["\""])*"\"" >
 }
 
-void mathuq():
-{}
+TOKEN : /*CADENA*/
 {
-	listadoSentencias() 	
+  <FINARCH: "?">
 }
 
-void listadoSentencias():
-{}
+SimpleNode mathuq():
+{Token t;}
 {
-  instruccion() [listadoSentencias()]
+	( instruccion() ) *
+	< EOF > { return jjtThis; }	
 }
 
-void instruccion():
+void instruccion() throws ParseException:
 {}
 {
   definirVar() | imprimir() | asignarVar() | condicion()
 }
 
 void definirVar():
-{}
+{Token t;}
 {
-  tipoDato()<IDENTIFICADOR>[<SEPARADOR> listadoIdentificadores()]<FIN_LINEA>
+  try { 
+  	tipoDato()t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)[t=<SEPARADOR> {jjtThis.value = t.image;} #SEPARADOR(true)listadoIdentificadores()]t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+  }catch(ParseException e) {
+	errorSaltar(FIN_LINEA);
+  }	 	
+  
 }
 
 void imprimir():
-{}
+{Token t;}
 {
-  < PALABRA_RESERVADA_ESCRIBIR > <ABRIR_CORCHETE> imprimible() <CERRAR_CORCHETE> <FIN_LINEA>
+  try { 
+  t=< PALABRA_RESERVADA_ESCRIBIR > {jjtThis.value = t.image;} #ESCRIBIR(true) t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) contactenacion() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+  }catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
 }
-
-void imprimible():
-{}
-{
- contactenacion() 	
 }
 
 void asignarVar():
-{}
+{Token t;}
 {
-  <IDENTIFICADOR> < ASIGNACION >  tipoAsignacion() <FIN_LINEA>
+  try { 
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true) t=<ASIGNACION> {jjtThis.value = t.image;} #ASIGNACION(true)  tipoAsignacion() t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+}catch(ParseException e) {
+    errorSaltar(FIN_LINEA);
+}
 }
 
-void tipoAsignacion():
+void tipoAsignacion() throws ParseException:
 {}
 { 
-  leer() | contactenacion() | operacionMat()
+  leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
 }
+
 
 void condicion():
-{}
+{Token t;}
 {
-  < PALABRA_RESERVADA_SI >  grupoCondiciones() < PALABRA_RESERVADA_ENTONCES >  listadoSentencias() [< PALABRA_RESERVADA_SINO >  listadoSentencias()] < PALABRA_RESERVADA_FINSI > 
+  try { 
+  t=<PALABRA_RESERVADA_SI> {jjtThis.value = t.image;} #SI(true)  grupoCondiciones() t=<PALABRA_RESERVADA_ENTONCES> {jjtThis.value = t.image;} #ENTONCES(true)  instruccion() [t=<PALABRA_RESERVADA_SINO> {jjtThis.value = t.image;} #SINO(true)  instruccion()] t=<PALABRA_RESERVADA_FINSI> {jjtThis.value = t.image;} #FINSI(true) 
+}catch(ParseException e) {
+    errorSaltar(PALABRA_RESERVADA_FINSI);
+}
 }
 
-void grupoCondiciones():
-{}
+void grupoCondiciones() throws ParseException:
+{Token t;}
 {
-  condicionador() <RELACIONALES> condicionador()
+  valor() t=<RELACIONALES> {jjtThis.value = t.image;} #OPERADOR_RELACIONAL(true) valor()
 }
 
-void condicionador():
-{}
+void valor() throws ParseException:
+{Token t;}
 {   
-  <IDENTIFICADOR>|<ENTERO>|<CADENA>
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)|t=<CADENA> {jjtThis.value = t.image;} #CADENA(true)
 }
 
-void leer():
-{}
+void leer() throws ParseException:
+{Token t;}
 {
-  <PALABRA_RESERVADA_LEER><ABRIR_CORCHETE> <CERRAR_CORCHETE> 
+  t=<PALABRA_RESERVADA_LEER> {jjtThis.value = t.image;} #LEER(true)t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true)t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
 }
 
-void operacionMat():
+void operacionMat() throws ParseException:
 {}
 {
- termino()[operadorAdicion()operacionMat()]
+ termino()(operadorAdicion() termino())*
 }
 
-void termino():
+void termino() throws ParseException:
 {}
 {
-  factor()[operadorMult() termino()]
+  factor()(operadorMult() factor())*
 }
 
-void factor():
-{}
+void factor() throws ParseException:
+{Token t;}
 {
-  condicionador() | < ABRIR_CORCHETE > operacionMat() < CERRAR_CORCHETE > 
+  valor() | t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) operacionMat() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
 }
 
-void operadorAdicion():
-{}
+void operadorAdicion() throws ParseException:
+{Token t;}
 {
- <SUMA>|<SUSTRACCION> 
+ t=<SUMA> {jjtThis.value = t.image;} #SUMA(true)|t=<SUSTRACCION> {jjtThis.value = t.image;} #SUSTRACCION(true)
 }
 
-void operadorMult():
-{}
+void operadorMult() throws ParseException:
+{Token t;}
 {
-  < MULTIPLICACION>|<MODULO>|<DIVISION>
+  t=<MULTIPLICACION> {jjtThis.value = t.image;} #SUMA(true)|t=<MODULO> {jjtThis.value = t.image;} #SUSTRACCION(true)|t=<DIVISION> {jjtThis.value = t.image;} #SUSTRACCION(true)
 }
 
-void contactenacion():
-{}
+void contactenacion() throws ParseException:
+{Token t;}
 {
-  condicionador() [< CONCATENAR > condicionador()  contactenacion()]  
+  valor() (t=<CONCATENAR> {jjtThis.value = t.image;} #CONCATENAR(true) valor())*  
 }
 
-void tipoDato():
-{}
+void tipoDato() throws ParseException:
+{Token t;}
 {
-  < PALABRA_RESERVADA_CADENA > | < PALABRA_RESERVADA_ENTERO > 
+  t=<PALABRA_RESERVADA_CADENA> {jjtThis.value = t.image;} #CADENA(true) | t=<PALABRA_RESERVADA_NUMERO> {jjtThis.value = t.image;} #NUMERO(true) 
 }
 
-void listadoIdentificadores():
-{}
+void listadoIdentificadores() throws ParseException:
+{Token t;}
 {
-  < IDENTIFICADOR >[ < SEPARADOR > listadoIdentificadores() ]
+  t= <IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)  (t= <SEPARADOR> {jjtThis.value = t.image;} #SEPARADOR(true) t= <IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true))*
 }
   
 
@@ -318,13 +376,13 @@ void listadoIdentificadores():
  *
  * TokenList -> (TokenElement)* 
  */
-void TokenList():
+void obtenerListadoTokens():
 {}
 { 
   ( TokenElement() )*  
 }
 
-void TokenElement():
+private void TokenElement():
 {Token pieza; }
 {  
  pieza = <PALABRA_RESERVADA_LEER> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA LEER", pieza); }
@@ -335,7 +393,7 @@ void TokenElement():
 | pieza = <PALABRA_RESERVADA_ENTONCES> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTONCES", pieza); }  
 | pieza = <PALABRA_RESERVADA_MIENTRAS> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA MIENTRAS", pieza); }
 | pieza = <PALABRA_RESERVADA_RETORNAR> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA RETORNAR", pieza); }
-| pieza = <PALABRA_RESERVADA_ENTERO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTERO", pieza); }
+| pieza = <PALABRA_RESERVADA_NUMERO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTERO", pieza); }
 | pieza = <PALABRA_RESERVADA_LOGICO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA LOGICO", pieza); }
 | pieza = <PALABRA_RESERVADA_CADENA> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA CADENA", pieza); }
 | pieza = <PALABRA_RESERVADA_IMPRIMIR> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA IMPRIMIR", pieza); }
@@ -356,6 +414,5 @@ void TokenElement():
 | pieza = <DIVISION> { numero++; grabarDatosPieza(numero, "DIVISION", pieza); }
 | pieza = <LOGICOS> { numero++; grabarDatosPieza(numero, "LOGICO", pieza); }
 | pieza = <RELACIONALES> { numero++; grabarDatosPieza(numero, "RELACIONALES", pieza); }
-| pieza = <COMENTARIO> { numero++; grabarDatosPieza(numero, "COMENTARIO", pieza); }
 | pieza = <CADENA> { numero++; grabarDatosPieza(numero, "CADENA", pieza); }
 }

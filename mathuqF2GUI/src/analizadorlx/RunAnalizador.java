@@ -8,13 +8,12 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 /**
- * Ejecuta el analizador léxico
+ * Ejecuta el Compilador
  *
- * @author Gustavo Salgado, Carlos Toro, Laura Rua Universidad del Quindio
- * Programa de Ingenieria de Sistemas y Computacion Asignatura: Teoría de
- * Lenguajes Formales
+ * @author Gustavo Salgado, Cristian Toro y Jorge Burbano Universidad del Quindio
+ * Programa de Ingenieria de Sistemas y Computacion Asignatura: Compiladores
  * @version 1.0
- * @since 2017
+ * @since 2018
  */
 public class RunAnalizador {
 
