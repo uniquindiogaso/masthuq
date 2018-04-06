@@ -21,13 +21,11 @@ public class Analizador
    private ArrayList<Variable> variables;
    private ArrayList<ParseException> errores;   
 
-   private static void grabarLexema (int n, String token,  String lexema, int nL, int nC) {
-      //System.out.println(n + ") Token: \t"+  token + "\t\t\tLexema: \t\"" + lexema + "\" \tLinea: \t"+ nL + "\tColumna: \t" + nC);
+   private static void grabarLexema (int n, String token,  String lexema, int nL, int nC) {    
       System.out.println(n + ") Linea:\t"+nL+"\tColumna:\t"+nC+"\tLexema:\t\""+lexema+"\"\t"+"Token:\t"+token);
    }  
 
-   private void grabarDatosPieza(int n, String token, Token pieza) {
-     // grabarLexema(n, token, pieza.image, pieza.beginLine, pieza.beginColumn );
+   private void grabarDatosPieza(int n, String token, Token pieza) {     
       variables.add(new Variable(n, token, pieza));      
    }
 
@@ -40,20 +38,13 @@ public class Analizador
   {
 	try
 	{
-	  	//errores = new ArrayList< ParseException > ();
-	   	//System.out.println("Ingrese el codigo a analizar:");
 	   	Analizador analizador = new Analizador(System.in);
 	   	SimpleNode nodoPrincipal = analizador.mathuq();
 	 	nodoPrincipal.dump("");
        	analizador.obtenerListadoTokens();
 
        	System.out.println(" Nodo " + nodoPrincipal);
-	 	System.out.println("Nodo Hijos " + nodoPrincipal.jjtGetNumChildren());
-
-	   //System.out.println("Se ha compilado con exito");
-       //System.out.println("Analisis terminado:");
-       //System.out.println("No se han hallado errores lexicos");
-       
+	 	System.out.println("Nodo Hijos " + nodoPrincipal.jjtGetNumChildren());      
        
     }catch(TokenMgrError te){
 	   System.out.println("Se han encontrado errores lexicos.");	   
@@ -84,17 +75,7 @@ public void inicializarCompilador(String nombreArchivo) throws java.io.FileNotFo
 	   System.out.println("##############################################");
 	   System.out.println("");
 	   Analizador analizador = new Analizador(new java.io.FileInputStream(nombreArchivo));
-	   System.out.println("Compilador ok ... ");
-	   
-	   	//nodoPrincipal = analizador.mathuq();
-	 	//nodoPrincipal.dump("");
-
-	 	//analizador.obtenerListadoTokens();       	
-
-	   //System.out.println("Se ha compilado con exito");
-       //System.out.println("Analisis terminado:");
-       //System.out.println("No se han hallado errores lexicos");      
-       
+	   System.out.println("Compilador ok ... ");  
   
 }
 
@@ -141,6 +122,7 @@ SKIP :
 | "\n"
 | "\r"
 | "\f"
+| < COMENTARIO :"##"(~["#"])*"##" >
 }
 
 TOKEN : /*PALABRA RESERVADA LEER*/
@@ -251,10 +233,6 @@ TOKEN : /*RELACIONALES*/
 {
   < RELACIONALES :"<"|">"|" >="|"<="|"<>"|"=="|"!=" >
 }
-TOKEN : /*COMENTARIO*/
-{
-  < COMENTARIO :"##"(~["#"])*"##" >
-}
 TOKEN : /*CADENA*/
 {
   < CADENA :"\""(~["\""])*"\"" >
@@ -266,7 +244,7 @@ TOKEN : /*CADENA*/
 }
 
 SimpleNode mathuq():
-{}
+{Token t;}
 {
 	( instruccion() ) *
 	< EOF > { return jjtThis; }	
@@ -312,7 +290,7 @@ void asignarVar():
 void tipoAsignacion() throws ParseException:
 {}
 { 
-  LOOKAHEAD(2) contactenacion() | leer() | operacionMat()
+  leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
 }
 
 
@@ -436,6 +414,5 @@ private void TokenElement():
 | pieza = <DIVISION> { numero++; grabarDatosPieza(numero, "DIVISION", pieza); }
 | pieza = <LOGICOS> { numero++; grabarDatosPieza(numero, "LOGICO", pieza); }
 | pieza = <RELACIONALES> { numero++; grabarDatosPieza(numero, "RELACIONALES", pieza); }
-| pieza = <COMENTARIO> { numero++; grabarDatosPieza(numero, "COMENTARIO", pieza); }
 | pieza = <CADENA> { numero++; grabarDatosPieza(numero, "CADENA", pieza); }
 }

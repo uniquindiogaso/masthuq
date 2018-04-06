@@ -1,0 +1,17 @@
+##Este programa es un ejemplo de ejecucion del Marth UQ##
+Numero a, b,d.
+Cadena c.
+Escribir["Hola"].
+c=Leer[].
+Escribir["Por favor ingrese el número a"].
+a=Leer[].
+Escribir["Por favor ingrese el número b"].
+b=Leer[].
+Escribir["Hola"@ c @ "El resultado de este programa"].
+Si a < b Entonces
+	Escribir["El número "@a@"Es mayor que "@b].	
+Sino
+	Escribir["El número "@b@"Es mayor que "@a].
+Finsi
+d=[a+b].
+Escribir["la suma de"@a@"y de"@b @ "es"@ d].

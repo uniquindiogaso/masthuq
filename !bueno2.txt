@@ -1,0 +1,11 @@
+Numero a, b, d.
+Cadena c. 
+
+Escribir["Por favor digite su nombre"]. 
+c=Leer[].
+
+Escribir["Por favor ingrese el número a"]. 
+a=Leer[].
+
+Escribir["Por favor ingrese el número b"]. 
+b=Leer[].

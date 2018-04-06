@@ -7,10 +7,11 @@ import co.edu.uniquindio.compiladores.frontend.lexico.SimpleNode;
 
 public class Impresion {
 
-	ArrayList<Variable> variables;
-	ArrayList<ParseException> errores;
-	private SimpleNode nodoPrincipal;
-
+	/**
+	 * Convertir Listado de Variables en un String tabulado
+	 * @param vars listado de Variables
+	 * @return Analizador lexico formato cadena
+	 */
 	public static String ImprimirLexico(ArrayList<Variable> vars) {
 		// System.out.println(n + ")
 		// Linea:\u005ct"+nL+"\u005ctColumna:\u005ct"+nC+"\u005ctLexema:\u005ct\u005c""+lexema+"\u005c"\u005ct"+"Token:\u005ct"+token);
@@ -28,12 +29,17 @@ public class Impresion {
 		int num = 0;
 		for (ParseException error : errores) {
 			num++;
-			res += num+") Error en Linea: " + error.currentToken.beginLine + " Columna: " + error.currentToken.endColumn
+			res += num+") Error Sintáctico encontrado en Linea: " + error.currentToken.beginLine + " Columna: " + error.currentToken.next.beginColumn
 					+ " Encontrado: \"" + error.currentToken.next + "\" Esperado: " + tokensEsperados(error).toString() + "\n";
 		}
 		return res;
 	}
 
+	/**
+	 * Metodo aux para traducir los mensajes del Parse a cristiano
+	 * @param error 
+	 * @return
+	 */
 	private static StringBuffer tokensEsperados(ParseException error) {
 		StringBuffer esperado = new StringBuffer();
 		int tMaximo = 0;
@@ -50,39 +56,6 @@ public class Impresion {
 			// expected.append(eol).append(" ");
 		}
 		return esperado;
-	}
-
-	public void test() {
-		// variables.add(new Variable(num, token, pieza));
-		ParseException error = null;
-
-		String msj = "Linea " + error.currentToken.beginLine + " Columna " + error.currentToken.beginColumn
-				+ " Encontrado " + error.tokenImage[0];
-
-	}
-
-	public ArrayList<Variable> getVariables() {
-		return variables;
-	}
-
-	public void setVariables(ArrayList<Variable> variables) {
-		this.variables = variables;
-	}
-
-	public ArrayList<ParseException> getErrores() {
-		return errores;
-	}
-
-	public void setErrores(ArrayList<ParseException> errores) {
-		this.errores = errores;
-	}
-
-	public SimpleNode getNodoPrincipal() {
-		return nodoPrincipal;
-	}
-
-	public void setNodoPrincipal(SimpleNode nodoPrincipal) {
-		this.nodoPrincipal = nodoPrincipal;
 	}
 
 }

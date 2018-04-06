@@ -9,23 +9,24 @@ import co.edu.uniquindio.compiladores.frontend.lexico.TokenMgrError;
 import co.edu.uniquindio.compiladores.utils.Impresion;
 import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 /**
- * Ventana del analizador lexico
+ * Ventana del Proyecto Procesadores
  *
- * @author Gustavo Salgado, Carlos Toro, Laura Rua Universidad del Quindio
- * Programa de Ingenieria de Sistemas y Computacion Asignatura: Teoría de
- * Lenguajes Formales
+ * @author Gustavo Salgado, Jorbe Burbano, Cristian Toro Universidad del Quindio
+ * Programa de Ingenieria de Sistemas y Computacion Asignatura: Procesadores
  * @version 1.0
- * @since 2017
+ * @since 2018
  */
 public class Ventana extends javax.swing.JFrame {
 
@@ -34,7 +35,7 @@ public class Ventana extends javax.swing.JFrame {
      */
     private Archivos archivoManager;
 
-    String tituloVentana = ".:. Analizador Lexico Compiladores b2 .:.";
+    String tituloVentana = ".:. HUQ - Analizador Sintáctico .:.";
 
     //Solo permitir analizar cuando se haya cargado un archivo
     boolean permitirAnalizar = false;
@@ -79,6 +80,7 @@ public class Ventana extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         bAnalizar = new javax.swing.JMenuItem();
         mCargar = new javax.swing.JMenuItem();
+        mNuevo = new javax.swing.JMenuItem();
         mGuardar = new javax.swing.JMenuItem();
         mGuardarComo = new javax.swing.JMenuItem();
         mSalir = new javax.swing.JMenuItem();
@@ -111,6 +113,11 @@ public class Ventana extends javax.swing.JFrame {
 
         jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/inicio.png"))); // NOI18N
         jMenu1.setText("Archivo");
+        jMenu1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu1ActionPerformed(evt);
+            }
+        });
 
         bAnalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/analizar.png"))); // NOI18N
         bAnalizar.setText("Analizar");
@@ -129,6 +136,15 @@ public class Ventana extends javax.swing.JFrame {
             }
         });
         jMenu1.add(mCargar);
+
+        mNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/nuevo.png"))); // NOI18N
+        mNuevo.setText("Nuevo");
+        mNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mNuevoActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mNuevo);
 
         mGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/guardar.png"))); // NOI18N
         mGuardar.setText("Guardar");
@@ -214,8 +230,7 @@ public class Ventana extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAnalizarActionPerformed
-
-        analizar();
+        ejecutar();
 
     }//GEN-LAST:event_bAnalizarActionPerformed
 
@@ -227,14 +242,14 @@ public class Ventana extends javax.swing.JFrame {
 
     private void mGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mGuardarActionPerformed
         if (!cEditor.getText().isEmpty()) {
-            GuardarJFileChooser(false);
+            GuardarJFileChooser(rutaArchivo.isEmpty(), true);
         } else {
             JOptionPane.showMessageDialog(null, "Editor vacio, para guardar un archivo debe escribir codigo!");
         }
     }//GEN-LAST:event_mGuardarActionPerformed
 
     private void mGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mGuardarComoActionPerformed
-        GuardarJFileChooser(true);
+        GuardarJFileChooser(true, true);
     }//GEN-LAST:event_mGuardarComoActionPerformed
 
     private void mSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mSalirActionPerformed
@@ -244,6 +259,14 @@ public class Ventana extends javax.swing.JFrame {
     private void mAcercaDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mAcercaDeActionPerformed
         devsInfo();
     }//GEN-LAST:event_mAcercaDeActionPerformed
+
+    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
+        
+    }//GEN-LAST:event_jMenu1ActionPerformed
+
+    private void mNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mNuevoActionPerformed
+        nuevo();
+    }//GEN-LAST:event_mNuevoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -264,9 +287,16 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JMenuItem mCargar;
     private javax.swing.JMenuItem mGuardar;
     private javax.swing.JMenuItem mGuardarComo;
+    private javax.swing.JMenuItem mNuevo;
     private javax.swing.JMenuItem mSalir;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Metodo Recursivo para llenar Arbol de Derivacion
+     *
+     * @param raiz Nodo Padre del Jtree
+     * @param padre Nodo Inicial que se tomara para construir arbol
+     */
     public void generarArbol(DefaultMutableTreeNode raiz, Node padre) {
         for (int i = 0; i < padre.jjtGetNumChildren(); i++) {
             Node nuevoPadre = padre.jjtGetChild(i);
@@ -281,36 +311,40 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     /**
-     * Analiza los tokens del archivo
+     * Ejecutar Analizador Sintactico
      */
-    private void analizar() {
+    private void ejecutar() {
         if (permitirAnalizar) {
             try {
+                GuardarJFileChooser(false, false);
+
                 //Borrar consola cuando se inicia el analisis
                 jTxtAreaConsola.setText("");
 
-                Analizador anal = new Analizador(new java.io.FileInputStream(rutaArchivo));
-                anal.init();
-                anal.obtenerListadoTokens();
-                String txtConsola = Impresion.ImprimirLexico(anal.getVariables());
+                Analizador sintacticoA = new Analizador(new java.io.FileInputStream(rutaArchivo));
+                sintacticoA.init();
+                //sintacticoA.obtenerListadoTokens();
 
-                anal.ReInit(new java.io.FileInputStream(rutaArchivo));
-                SimpleNode nodo = anal.mathuq();
-                System.out.println("anal.getErrores().size() " + anal.getErrores().size());
+                sintacticoA.ReInit(new java.io.FileInputStream(rutaArchivo));
+                SimpleNode nodo = sintacticoA.mathuq();
+                System.out.println("anal.getErrores().size() " + sintacticoA.getErrores().size());
 
-                if (anal.getErrores().isEmpty()) {
+                if (sintacticoA.getErrores().isEmpty()) {
                     System.out.println("Nodo Principal  " + nodo);
                     System.out.println("Nodo Hijos " + nodo.jjtGetNumChildren());
+
+                    raiz = new DefaultMutableTreeNode("Estructura");
                     generarArbol(raiz, nodo);
                     DefaultTreeModel modelo = new DefaultTreeModel(raiz);
                     arbol.setModel(modelo);
                     colorConsola(Color.BLUE);
-                    jTxtAreaConsola.setText(txtConsola);
-                }else{
+                    String consola = "Analisis Sintáctico realizado con exito.";
+                    jTxtAreaConsola.setText(consola);
+                } else {
                     colorConsola(Color.RED);
-                    txtConsola = Impresion.imprimirErrores(anal.getErrores());
-                    jTxtAreaConsola.setText(txtConsola);
-                    
+                    String consola = Impresion.imprimirErrores(sintacticoA.getErrores());
+                    jTxtAreaConsola.setText(consola);
+
                     DefaultMutableTreeNode raizError = new DefaultMutableTreeNode("No Arbol");
                     DefaultTreeModel modelo = new DefaultTreeModel(raizError);
                     arbol.setModel(modelo);
@@ -318,16 +352,26 @@ public class Ventana extends javax.swing.JFrame {
             } catch (TokenMgrError te) {
                 System.out.println("GUI - Se han encontrado errores lexicos.");
                 System.out.println(te.getMessage());
+                jTxtAreaConsola.setText("Errores Lexicos Encontrados, para poder analizar sintacticamente debe corregirlos primero.\n" + te.getMessage());
             } catch (ParseException e) {
                 System.out.println("Analizador: Se han encontrado errores en Parse.");
                 System.out.println(e.getMessage());
-            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Upps!, Error Sintactico no controlado. Por favor reinicie la aplicacion e intente nuevamente con otro archivo.");
+                jTxtAreaConsola.setText(e.getMessage());
+            } catch (FileNotFoundException e) {
                 System.out.println("Analizador: Error General");
                 System.out.println(e.getMessage());
+                JOptionPane.showMessageDialog(this, "No se encuentra el Archivo, por favor revise las rutas:\n" + e.getMessage());
             }
 
         } else {
-            JOptionPane.showMessageDialog(null, "Para realizar un análisis Lexico\nse requiere cargar un archivo válido.");
+            String msj= "Para realizar un análisis Sintáctico\nse requiere cargar un archivo válido.\nPor favor abra un Archivo .huq o cree un nuevo archivo.";
+            
+            if ( rutaArchivo.isEmpty() && !cEditor.getText().isEmpty()){
+                msj = "Para ejecutar analisis primero debe guardar el archivo.";
+            }                     
+            
+            JOptionPane.showMessageDialog(null, msj);
         }
 
     }
@@ -337,8 +381,8 @@ public class Ventana extends javax.swing.JFrame {
      */
     private void abrirJFileChooser() {
         JFileChooser fileChoser = new JFileChooser();
-        // FileNameExtensionFilter filtro = new FileNameExtensionFilter(".ssql", "SSQL", "*.ssql");
-        //fileChoser.setFileFilter(filtro);
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter(".huq", "HUQ", "*.huq");
+        fileChoser.setFileFilter(filtro);
         fileChoser.showOpenDialog(this);
 
         File archivo = fileChoser.getSelectedFile();
@@ -362,33 +406,37 @@ public class Ventana extends javax.swing.JFrame {
      *
      * @param guardarComo identifica si es un guardar o guardarComo
      */
-    private boolean GuardarJFileChooser(boolean guardarComo) {
+    private boolean GuardarJFileChooser(boolean guardarComo, boolean callback) {
         boolean ban = false;
-
-        boolean guarda = false;
-
+        boolean guarda = false;       
+        
         if (guardarComo) {
             JFileChooser fileChoser = new JFileChooser();
-            fileChoser.setSelectedFile(new File("miSQLAnalisis_" + System.currentTimeMillis() + ".ssql"));
-            fileChoser.setFileFilter(new FileNameExtensionFilter(".ssql", "ssql"));
+            fileChoser.setSelectedFile(new File("miMarthUQ_" + System.currentTimeMillis() + ".huq"));
+            fileChoser.setFileFilter(new FileNameExtensionFilter(".huq", "huq"));
             fileChoser.showSaveDialog(this);
             File nuevoArchivo = fileChoser.getSelectedFile();
 
             if (null != nuevoArchivo) {
+                //guardarComo....
                 guarda = archivoManager.guardar(cEditor.getText(), nuevoArchivo);
                 actualizarRutasArchivo(nuevoArchivo);
 
                 if (guarda) {
-                    JOptionPane.showMessageDialog(null, "Archivo guardado correctamente..");
+                    if (callback) {
+                        JOptionPane.showMessageDialog(null, "Archivo guardado correctamente");
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, "El archivo no pudo guardarse.");
+                    JOptionPane.showMessageDialog(null, "El archivo no pudo guardarse");
                 }
             }
             ban = true;
         } else {
             guarda = archivoManager.guardar(cEditor.getText(), new File(rutaArchivo));
             if (guarda) {
-                JOptionPane.showMessageDialog(null, "Archivo guardado correctamente.");
+                if (callback) {
+                    JOptionPane.showMessageDialog(null, "Archivo guardado correctamente.");
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "El archivo no pudo guardarse.");
             }
@@ -406,6 +454,9 @@ public class Ventana extends javax.swing.JFrame {
         try {
             setTitle(tituloVentana + " | analizando : " + archivo.getCanonicalPath());
             rutaArchivo = archivo.getCanonicalPath();
+            
+            //Permite Analizar si actualiza las rutas
+            permitirAnalizar = true;
 
         } catch (IOException ex) {
             Logger.getLogger(Ventana.class
@@ -414,17 +465,38 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     /**
-     * Informacion sobre los creadores del Software
+     * Informacion sobre los colaboradores del proyecto
      */
     private void devsInfo() {
-        JOptionPane.showMessageDialog(null, "Materia: Teoria de Lenguajes Formales\n"
-                + "Universidad del Quindio 2017\n"
-                + "Devs:\n"
-                + "Gustavo Salgado");
+        JOptionPane.showMessageDialog(null, "Fase II: Compilador\n"
+                + "Universidad del Quindio 2018\n"
+                + "Grupo:\n"
+                + "Jorge Burbano - Cristian Toro - Gustavo Salgado");
     }
-    
-    private void colorConsola(Color color){
+
+    /**
+     * Cambiar Color Consola
+     *
+     * @param color Constante que representa el Color
+     */
+    private void colorConsola(Color color) {
         jTxtAreaConsola.setForeground(color);
     }
-    
+
+    /**
+     * Reiniciar Ventana
+     */
+    private void nuevo() {
+        DefaultMutableTreeNode raizError = new DefaultMutableTreeNode("No Arbol");
+        DefaultTreeModel modelo = new DefaultTreeModel(raizError);
+        arbol.setModel(modelo);
+        
+        cEditor.setText("");
+        jTxtAreaConsola.setText("");
+        
+        rutaArchivo = "";
+        
+        permitirAnalizar = false;
+    }
+
 }
