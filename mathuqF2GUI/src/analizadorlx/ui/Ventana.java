@@ -93,6 +93,7 @@ public class Ventana extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         analizadorlx.utilidades.TextLineNumber tln = new analizadorlx.utilidades.TextLineNumber(cEditor);
+        cEditor.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
         jScrollPane1.setViewportView(cEditor);
         jScrollPane1.setRowHeaderView( tln );
 
@@ -100,6 +101,7 @@ public class Ventana extends javax.swing.JFrame {
         jScrollPane4.setAutoscrolls(true);
 
         jTxtAreaConsola.setColumns(20);
+        jTxtAreaConsola.setFont(new java.awt.Font("Consolas", 0, 13)); // NOI18N
         jTxtAreaConsola.setLineWrap(true);
         jTxtAreaConsola.setRows(5);
         jTxtAreaConsola.setTabSize(2);
@@ -107,6 +109,7 @@ public class Ventana extends javax.swing.JFrame {
 
         jLabel1.setText("Consola");
 
+        arbol.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Arbol BNF");
         arbol.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane3.setViewportView(arbol);

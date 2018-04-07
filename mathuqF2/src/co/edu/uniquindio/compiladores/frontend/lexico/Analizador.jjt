@@ -149,29 +149,13 @@ TOKEN : /*PALABRA RESERVADA ENTONCES*/
 {
   < PALABRA_RESERVADA_ENTONCES: "Entonces" >
 }
-TOKEN : /*PALABRA RESERVADA MIENTRAS*/
-{
-  < PALABRA_RESERVADA_MIENTRAS: "Mientras" >
-}
-TOKEN : /*PALABRA RESERVADA RETORNAR*/
-{
-  < PALABRA_RESERVADA_RETORNAR: "Retornar" >
-}
 TOKEN : /*PALABRA RESERVADA ENTERO*/
 {
   < PALABRA_RESERVADA_NUMERO: "Numero" >
 }
-TOKEN : /*PALABRA RESERVADA LOGICO*/
-{
-  < PALABRA_RESERVADA_LOGICO: "Logico" >
-}
 TOKEN : /*PALABRA RESERVADA CADENA*/
 {
   < PALABRA_RESERVADA_CADENA: "Cadena" >
-}
-TOKEN : /*PALABRA RESERVADA IMPRIMIR*/
-{
-  < PALABRA_RESERVADA_IMPRIMIR: "Imprimir" >
 }
 TOKEN : /* ASIGNACION*/
 {
@@ -209,14 +193,7 @@ TOKEN : /* CERRAR CORCHETE*/
 {
   < CERRAR_CORCHETE : "]" >
 }
-TOKEN : /* ABRIR LLAVE*/
-{
-  < ABRIR_LLAVE : "{" >
-}
-TOKEN : /* CERRAR LLAVE*/
-{
-  < CERRAR_LLAVE : "}" >
-}
+
 TOKEN : /* OPERATORS SUSTRACCION*/
 {
   < SUMA : "+" >
@@ -397,13 +374,9 @@ private void TokenElement():
 | pieza = <PALABRA_RESERVADA_SI> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA SI", pieza); }
 | pieza = <PALABRA_RESERVADA_SINO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA SINO", pieza); }
 | pieza = <PALABRA_RESERVADA_FINSI> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA FINSI", pieza); }
-| pieza = <PALABRA_RESERVADA_ENTONCES> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTONCES", pieza); }  
-| pieza = <PALABRA_RESERVADA_MIENTRAS> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA MIENTRAS", pieza); }
-| pieza = <PALABRA_RESERVADA_RETORNAR> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA RETORNAR", pieza); }
+| pieza = <PALABRA_RESERVADA_ENTONCES> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTONCES", pieza); }
 | pieza = <PALABRA_RESERVADA_NUMERO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA ENTERO", pieza); }
-| pieza = <PALABRA_RESERVADA_LOGICO> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA LOGICO", pieza); }
 | pieza = <PALABRA_RESERVADA_CADENA> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA CADENA", pieza); }
-| pieza = <PALABRA_RESERVADA_IMPRIMIR> { numero++; grabarDatosPieza(numero, "PALABRA RESERVADA IMPRIMIR", pieza); }
 | pieza = <ASIGNACION> { numero++; grabarDatosPieza(numero, "ASIGNACION", pieza); }
 | pieza = <ENTERO> { numero++; grabarDatosPieza(numero, "ENTERO", pieza); }
 | pieza = <CONCATENAR> { numero++; grabarDatosPieza(numero, "CONCATENAR", pieza); }
@@ -412,8 +385,6 @@ private void TokenElement():
 | pieza = <FIN_LINEA> { numero++; grabarDatosPieza(numero, "FIN LINEA", pieza); }
 | pieza = <ABRIR_CORCHETE> { numero++; grabarDatosPieza(numero, "ABRIR CORCHETE", pieza); }
 | pieza = <CERRAR_CORCHETE> { numero++; grabarDatosPieza(numero, "CERRAR CORCHETE", pieza); }
-| pieza = <ABRIR_LLAVE> { numero++; grabarDatosPieza(numero, "ABRIR LLAVE", pieza); }
-| pieza = <CERRAR_LLAVE> { numero++; grabarDatosPieza(numero, "CERRAR LLAVE", pieza); }
 | pieza = <SUMA> { numero++; grabarDatosPieza(numero, "SUMA" , pieza); }
 | pieza = <MULTIPLICACION> { numero++; grabarDatosPieza(numero, "MULTIPLICACION", pieza); }
 | pieza = <MODULO> { numero++; grabarDatosPieza(numero, "MODULO", pieza); }
