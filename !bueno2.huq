@@ -1,10 +1,10 @@
 Numero suma, resta,div.
 suma=[5+2].
 resta=[6/2].
-div=-3.
+div=[-3].
 Cadena msj.
 msj="Hola Mundo".
-Escribir[msj].
+Escribir["El Mensaje es" @ msj].
 
 Escribir["Iniciando condicion: "].
 Si suma < resta Entonces

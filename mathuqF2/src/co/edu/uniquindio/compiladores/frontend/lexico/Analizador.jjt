@@ -179,7 +179,7 @@ TOKEN : /* ASIGNACION*/
 }
 TOKEN : /*NUMEROS EJEMPLO 1, 1234, 987*/
 {
-  < ENTERO : (< DIGIT >)+ | "-"(< DIGIT >)+ >
+  < ENTERO : (< DIGIT >)+ | "[""-"(< DIGIT >)+"]" >
 | < #DIGIT : [ "0"-"9" ] >
 }
 TOKEN : /*CONCATENAR*/
@@ -313,8 +313,15 @@ void grupoCondiciones() throws ParseException:
 void valor() throws ParseException:
 {Token t;}
 {   
-  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)|t=<CADENA> {jjtThis.value = t.image;} #CADENA(true)
+  valor2() |t=<CADENA> {jjtThis.value = t.image;} #CADENA(true)
 }
+
+void valor2() throws ParseException:
+{Token t;}
+{   
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)
+}
+
 
 void leer() throws ParseException:
 {Token t;}
@@ -337,7 +344,7 @@ void termino() throws ParseException:
 void factor() throws ParseException:
 {Token t;}
 {
-  valor() | t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) operacionMat() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
+  valor2() | t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) operacionMat() t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
 }
 
 void operadorAdicion() throws ParseException:
@@ -355,7 +362,7 @@ void operadorMult() throws ParseException:
 void contactenacion() throws ParseException:
 {Token t;}
 {
-  valor() (t=<CONCATENAR> {jjtThis.value = t.image;} #CONCATENAR(true) valor())*  
+  t=<CADENA> {jjtThis.value = t.image;} #CADENA(true) (t=<CONCATENAR> {jjtThis.value = t.image;} #CONCATENAR(true) valor())*  
 }
 
 void tipoDato() throws ParseException:
