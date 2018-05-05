@@ -1,0 +1,58 @@
+package co.edu.uniquindio.compiladores.utils;
+
+import java.util.ArrayList;
+
+public class TablaSimbolos {
+	private ArrayList<Variable> tabla;
+	
+	public TablaSimbolos() {
+		tabla = new ArrayList<>();
+	}
+	
+	private  Variable obtenerVariable(String token){
+		for(Variable v : tabla){
+			if(token.equals(v.getToken())){
+				return v;
+			}
+		}
+		return null;
+	}
+	
+	public boolean existe(String token){
+		for(Variable v : tabla){
+			if (token.equals(v.getToken())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean tieneValor(String token){
+		for(Variable v : tabla){
+			if (token.equals(v.getToken())){
+				return v.getValor() != null ? true : false;
+			}
+		}
+		return false;
+	}
+	
+	public boolean compatibles(String token1 , String token2){
+		//TODO determinar si es necesario capturar si llega null
+		return  ( obtenerVariable(token1).getTipo().equals(obtenerVariable(token2)) );		
+	}
+	
+	public boolean operadorPermitido(String token1 , String token2, String operador){
+		if (!compatibles(token1, token2)){
+			return false;
+		}
+		
+		//Como ambas se supone son del mismo tipo
+		Variable t = obtenerVariable(token1);
+		
+		if ( obtenerVariable(token1).getTipo() )
+		
+		
+		return false;
+	}
+
+}
