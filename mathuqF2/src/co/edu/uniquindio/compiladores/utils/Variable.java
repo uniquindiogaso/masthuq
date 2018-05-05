@@ -7,6 +7,8 @@ public class Variable {
 	private int num;
 	private String token;
 	private Token lexema;
+	private Object valor;
+	private String tipo;
 	
 	public Variable(int num, String token, Token pieza) {
 		super();
@@ -14,6 +16,8 @@ public class Variable {
 		this.token = token;
 		this.lexema = pieza;
 	}
+	
+	
 
 	public int getNum() {
 		return num;
@@ -38,5 +42,31 @@ public class Variable {
 	public void setLexema(Token lexema) {
 		this.lexema = lexema;
 	}
+
+
+
+	public Object getValor() {
+		return valor;
+	}
+
+
+
+	public void setValor(Object valor) {
+		this.valor = valor;
+	}
+
+
+
+	public String getTipo() {
+		return tipo;
+	}
+
+
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
+	
 	
 }
