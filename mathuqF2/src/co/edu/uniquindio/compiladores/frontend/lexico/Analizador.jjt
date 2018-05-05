@@ -290,7 +290,7 @@ void grupoCondiciones() throws ParseException:
 void valor() throws ParseException:
 {Token t;}
 {   
-  valor2() |t=<CADENA> {jjtThis.value = t.image;} #CADENA(true)
+  operacionMat() |contactenacion()
 }
 
 void valor2() throws ParseException:
