@@ -4,4 +4,5 @@
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="co.edu.uniquindio.compiladores.utils.TablaSimbolos"/>
 <fullyQualifiedTypeName name="co.edu.uniquindio.compiladores.utils.Variable"/>
+<fullyQualifiedTypeName name="javax.swing.SingleSelectionModel"/>
 </qualifiedTypeNameHistroy>
