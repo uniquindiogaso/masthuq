@@ -35,7 +35,7 @@ public class Ventana extends javax.swing.JFrame {
      */
     private Archivos archivoManager;
 
-    String tituloVentana = ".:. HUQ - Analizador Sintáctico .:.";
+    String tituloVentana = ".:. HUQ - Analizador Semántico .:.";
 
     //Solo permitir analizar cuando se haya cargado un archivo
     boolean permitirAnalizar = false;
@@ -76,17 +76,14 @@ public class Ventana extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         arbol = new javax.swing.JTree();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        bAnalizar = new javax.swing.JMenuItem();
-        mCargar = new javax.swing.JMenuItem();
-        mNuevo = new javax.swing.JMenuItem();
-        mGuardar = new javax.swing.JMenuItem();
-        mGuardarComo = new javax.swing.JMenuItem();
-        mSalir = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenu2 = new javax.swing.JMenu();
-        mAcercaDe = new javax.swing.JMenuItem();
+        jToolBar1 = new javax.swing.JToolBar();
+        bNuevo = new javax.swing.JButton();
+        bCargar = new javax.swing.JButton();
+        bGuardar = new javax.swing.JButton();
+        bGuardarComo = new javax.swing.JButton();
+        bCompilar = new javax.swing.JButton();
+        bAcerca = new javax.swing.JButton();
+        bSalir = new javax.swing.JButton();
 
         jMenuItem4.setText("jMenuItem4");
 
@@ -115,86 +112,93 @@ public class Ventana extends javax.swing.JFrame {
         arbol.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane3.setViewportView(arbol);
 
-        jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/inicio.png"))); // NOI18N
-        jMenu1.setText("Archivo");
-        jMenu1.addActionListener(new java.awt.event.ActionListener() {
+        jToolBar1.setRollover(true);
+
+        bNuevo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        bNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/nuevo.png"))); // NOI18N
+        bNuevo.setToolTipText("Generar Nuevo Archivo");
+        bNuevo.setFocusable(false);
+        bNuevo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNuevo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu1ActionPerformed(evt);
+                bNuevoActionPerformed(evt);
             }
         });
+        jToolBar1.add(bNuevo);
 
-        bAnalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/analizar.png"))); // NOI18N
-        bAnalizar.setText("Analizar");
-        bAnalizar.addActionListener(new java.awt.event.ActionListener() {
+        bCargar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/abrir.png"))); // NOI18N
+        bCargar.setToolTipText("Abrir Archivo");
+        bCargar.setFocusable(false);
+        bCargar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCargar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bCargar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bAnalizarActionPerformed(evt);
+                bCargarActionPerformed(evt);
             }
         });
-        jMenu1.add(bAnalizar);
+        jToolBar1.add(bCargar);
 
-        mCargar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/abrir.png"))); // NOI18N
-        mCargar.setText("Cargar Archivo");
-        mCargar.addActionListener(new java.awt.event.ActionListener() {
+        bGuardar.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        bGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/guardar.png"))); // NOI18N
+        bGuardar.setToolTipText("Guardar");
+        bGuardar.setFocusable(false);
+        bGuardar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bGuardar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mCargarActionPerformed(evt);
+                bGuardarActionPerformed(evt);
             }
         });
-        jMenu1.add(mCargar);
+        jToolBar1.add(bGuardar);
 
-        mNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/nuevo.png"))); // NOI18N
-        mNuevo.setText("Nuevo");
-        mNuevo.addActionListener(new java.awt.event.ActionListener() {
+        bGuardarComo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/guardarcomo.png"))); // NOI18N
+        bGuardarComo.setToolTipText("Guardar Como");
+        bGuardarComo.setFocusable(false);
+        bGuardarComo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bGuardarComo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bGuardarComo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mNuevoActionPerformed(evt);
+                bGuardarComoActionPerformed(evt);
             }
         });
-        jMenu1.add(mNuevo);
+        jToolBar1.add(bGuardarComo);
 
-        mGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/guardar.png"))); // NOI18N
-        mGuardar.setText("Guardar");
-        mGuardar.addActionListener(new java.awt.event.ActionListener() {
+        bCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/acerca_devs.png"))); // NOI18N
+        bCompilar.setToolTipText("¡Compilar!");
+        bCompilar.setFocusable(false);
+        bCompilar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCompilar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bCompilar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mGuardarActionPerformed(evt);
+                bCompilarActionPerformed(evt);
             }
         });
-        jMenu1.add(mGuardar);
+        jToolBar1.add(bCompilar);
 
-        mGuardarComo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/guardar.png"))); // NOI18N
-        mGuardarComo.setText("Guardar como");
-        mGuardarComo.addActionListener(new java.awt.event.ActionListener() {
+        bAcerca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/acerca.png"))); // NOI18N
+        bAcerca.setToolTipText("Acerca de");
+        bAcerca.setFocusable(false);
+        bAcerca.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bAcerca.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bAcerca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mGuardarComoActionPerformed(evt);
+                bAcercaActionPerformed(evt);
             }
         });
-        jMenu1.add(mGuardarComo);
+        jToolBar1.add(bAcerca);
 
-        mSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/salir.png"))); // NOI18N
-        mSalir.setText("Salir");
-        mSalir.addActionListener(new java.awt.event.ActionListener() {
+        bSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/salir.png"))); // NOI18N
+        bSalir.setToolTipText("Salir Aplicación");
+        bSalir.setFocusable(false);
+        bSalir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bSalir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mSalirActionPerformed(evt);
+                bSalirActionPerformed(evt);
             }
         });
-        jMenu1.add(mSalir);
-        jMenu1.add(jSeparator1);
-
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/acerca.png"))); // NOI18N
-        jMenu2.setText("Ayuda");
-
-        mAcercaDe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/acerca_devs.png"))); // NOI18N
-        mAcercaDe.setText("Acerca De");
-        mAcercaDe.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mAcercaDeActionPerformed(evt);
-            }
-        });
-        jMenu2.add(mAcercaDe);
-
-        jMenuBar1.add(jMenu2);
-
-        setJMenuBar(jMenuBar1);
+        jToolBar1.add(bSalir);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -207,92 +211,84 @@ public class Ventana extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane4)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 888, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jScrollPane3)))
-                .addGap(5, 5, 5)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 15, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAnalizarActionPerformed
-        ejecutar();
+    private void bNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNuevoActionPerformed
+        nuevo();
+    }//GEN-LAST:event_bNuevoActionPerformed
 
-    }//GEN-LAST:event_bAnalizarActionPerformed
+    private void bCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCargarActionPerformed
+       jTxtAreaConsola.setText("");
+cEditor.setText("");
+abrirJFileChooser();
+    }//GEN-LAST:event_bCargarActionPerformed
 
-    private void mCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mCargarActionPerformed
-        jTxtAreaConsola.setText("");
-        cEditor.setText("");
-        abrirJFileChooser();
-    }//GEN-LAST:event_mCargarActionPerformed
-
-    private void mGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mGuardarActionPerformed
-        if (!cEditor.getText().isEmpty()) {
+    private void bGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGuardarActionPerformed
+               if (!cEditor.getText().isEmpty()) {
             GuardarJFileChooser(rutaArchivo.isEmpty(), true);
         } else {
             JOptionPane.showMessageDialog(null, "Editor vacio, para guardar un archivo debe escribir codigo!");
         }
-    }//GEN-LAST:event_mGuardarActionPerformed
+    }//GEN-LAST:event_bGuardarActionPerformed
 
-    private void mGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mGuardarComoActionPerformed
-        GuardarJFileChooser(true, true);
-    }//GEN-LAST:event_mGuardarComoActionPerformed
+    private void bGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGuardarComoActionPerformed
+         GuardarJFileChooser(true, true);
+    }//GEN-LAST:event_bGuardarComoActionPerformed
 
-    private void mSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mSalirActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_mSalirActionPerformed
+    private void bCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCompilarActionPerformed
+       ejecutar();
+    }//GEN-LAST:event_bCompilarActionPerformed
 
-    private void mAcercaDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mAcercaDeActionPerformed
+    private void bAcercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAcercaActionPerformed
         devsInfo();
-    }//GEN-LAST:event_mAcercaDeActionPerformed
+    }//GEN-LAST:event_bAcercaActionPerformed
 
-    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
-        
-    }//GEN-LAST:event_jMenu1ActionPerformed
-
-    private void mNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mNuevoActionPerformed
-        nuevo();
-    }//GEN-LAST:event_mNuevoActionPerformed
+    private void bSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSalirActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_bSalirActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTree arbol;
-    private javax.swing.JMenuItem bAnalizar;
+    private javax.swing.JButton bAcerca;
+    private javax.swing.JButton bCargar;
+    private javax.swing.JButton bCompilar;
+    private javax.swing.JButton bGuardar;
+    private javax.swing.JButton bGuardarComo;
+    private javax.swing.JButton bNuevo;
+    private javax.swing.JButton bSalir;
     private javax.swing.JTextPane cEditor;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTextArea jTxtAreaConsola;
-    private javax.swing.JMenuItem mAcercaDe;
-    private javax.swing.JMenuItem mCargar;
-    private javax.swing.JMenuItem mGuardar;
-    private javax.swing.JMenuItem mGuardarComo;
-    private javax.swing.JMenuItem mNuevo;
-    private javax.swing.JMenuItem mSalir;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -472,7 +468,7 @@ public class Ventana extends javax.swing.JFrame {
      * Informacion sobre los colaboradores del proyecto
      */
     private void devsInfo() {
-        JOptionPane.showMessageDialog(null, "Fase II: Compilador\n"
+        JOptionPane.showMessageDialog(null, "Fase III: Compilador\n"
                 + "Universidad del Quindio 2018\n"
                 + "Grupo:\n"
                 + "Jorge Burbano - Cristian Toro - Gustavo Salgado");

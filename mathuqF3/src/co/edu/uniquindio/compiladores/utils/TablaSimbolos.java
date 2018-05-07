@@ -114,8 +114,43 @@ public class TablaSimbolos {
 			tabla.add(new Variable(lexema.image,lexema,null,tipo));
 		  }else {
 			//aca reportar error
+			 System.out.println("Error Agregando " + token + " ya esta definido");
 		  }
 	}
+	
+	/**
+	 * Validaciones semanticas que se ocurren en el momento de usar una sentencia imprimir
+	 * @param token
+	 */
+	public void validoUsar(Token token){
+		boolean existe = existe(token.image);
+		boolean valor = tieneValor(token.image);
+		
+		if (!existe){
+			//agregar a tabla de Errores
+			System.out.println(token.image + " no esta definida");
+		}
+		
+		if (!valor){
+			//agregar a tabla de Errores
+		}	System.out.println("Para usar " + token.image + " debe tener un valor");
+	}
+	
+	public void validoAsignar(Token token){
+		boolean existe = existe(token.image);
+		if(!existe){
+			//agregar a tabla de errores
+			System.out.println(token.image + " no esta definida");
+		}else{
+			//asignar valor aca.
+		}
+	}
+	
+	public void prueba(Token t){
+		//t.
+	}
+	
+	
 	
 	
 	

@@ -211,7 +211,7 @@ TOKEN : /*LOGICOS*/
 }
 TOKEN : /*RELACIONALES*/
 {
-  < RELACIONALES :"<"|">"|" >="|"<="|"<>"|"=="|"!=" >
+  < RELACIONALES :"<"|">"|" >="|"<="|"=="|"!=" >
 }
 TOKEN : /*CADENA*/
 {
@@ -262,7 +262,7 @@ void asignarVar():
 {Token t;}
 {
   try { 
-  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true) t=<ASIGNACION> {jjtThis.value = t.image;} #ASIGNACION(true)  tipoAsignacion() t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;tabla.validoAsignar(t);} #IDENTIFICADOR(true) t=<ASIGNACION> {jjtThis.value = t.image;} #ASIGNACION(true)  tipoAsignacion() t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
 }catch(ParseException e) {
     errorSaltar(FIN_LINEA);
 }
@@ -271,7 +271,8 @@ void asignarVar():
 void tipoAsignacion() throws ParseException:
 {}
 { 
-  leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
+ // leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
+ leer() | valor()
 }
 
 
@@ -300,7 +301,7 @@ void valor() throws ParseException:
 void valor2() throws ParseException:
 {Token t;}
 {   
-  t=<IDENTIFICADOR> {jjtThis.value = t.image;} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;tabla.validoUsar(t);} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;} #ENTERO(true)
 }
 
 
@@ -337,7 +338,7 @@ void operadorAdicion() throws ParseException:
 void operadorMult() throws ParseException:
 {Token t;}
 {
-  t=<MULTIPLICACION> {jjtThis.value = t.image;} #SUMA(true)|t=<MODULO> {jjtThis.value = t.image;} #SUSTRACCION(true)|t=<DIVISION> {jjtThis.value = t.image;} #SUSTRACCION(true)
+  t=<MULTIPLICACION> {jjtThis.value = t.image;} #MULT(true)|t=<MODULO> {jjtThis.value = t.image;} #MOD(true)|t=<DIVISION> {jjtThis.value = t.image;} #DIV(true)
 }
 
 void contactenacion() throws ParseException:

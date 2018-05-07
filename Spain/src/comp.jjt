@@ -1,0 +1,719 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  static = true;
+}
+
+PARSER_BEGIN(comp)
+  import java.util.*;
+  import java.util.Hashtable;
+import java.util.ArrayList;
+
+
+
+public class comp
+{
+
+ 
+
+
+
+  public static class TS extends Object {
+	String tipoDato = "";
+	String valor = "";
+	public TS(String td, String value) {
+		this.tipoDato = td;
+		this.valor = value;
+	}
+	public String getValor() {
+	  return valor;
+	}
+	public String getTipoDato() {
+	  return tipoDato;
+	}
+  }
+ public comp() {
+ };
+  static String tipo = "";
+  static String identificador = "";
+  String dato = "";
+  static String errores="";
+public static variable v;
+public static ArrayList<variable> variables= new ArrayList<variable>();
+static String acumuladorErrores="";
+ static Token Dato1;
+ static Token Dato2;
+ static  Token operador_if;
+ static int pos=0;
+static Token asignar;
+static Boolean activo=false;
+static Boolean activoif=false;
+
+ static Token asignar_id;
+public static ArrayList<Token> sumar= new ArrayList<Token>();
+
+
+
+  
+  public void reInitErrores() {
+    errores="";
+  }
+  public String getErrores() {
+    return errores;
+  }
+  public static void addErrorSemantico(int beginLine,String mensaje) {
+    errores+="Error semantico en la linea "+beginLine+":"+"\n"+mensaje+"\n";
+  }
+
+public void setError(String string) {
+acumuladorErrores=string;
+
+   tipo = "";
+  identificador = "";
+   dato = "";
+  errores="";
+variables= new ArrayList<variable>();
+ acumuladorErrores="";
+  pos=0;
+ activo=false;
+ activoif=false;
+ sumar= new ArrayList<Token>();
+sumar.clear();
+
+
+
+}
+
+  
+  
+   /*public static void validarTipoAsignacion(int beginLine,String Token,String tipoAsignacion,String tipoIdentificador) {
+	if(tipoIdentificador.equals("Contenedor")|tipoIdentificador.equals("Boton")) {
+	  if(!(tipoAsignacion.equals("Id")|tipoAsignacion.equals("Estilo")|tipoAsignacion.equals("Texto"))) {
+		addErrorSemantico(beginLine,"Al "+tipoIdentificador+" "+Token+" se le esta asignando una propiedad "+tipoAsignacion+", Pero solo se permite las porpiedades id, estilo y texto");
+	  };
+	}else if(tipoIdentificador.equals("Formulario")) {
+	  if(!(tipoAsignacion.equals("Id")|tipoAsignacion.equals("Estilo")|tipoAsignacion.equals("Texto")|tipoAsignacion.equals("Contenido"))) {
+		addErrorSemantico(beginLine,"Al "+tipoIdentificador+" "+Token+" se le esta asignando una propiedad "+tipoAsignacion+", Pero solo se permite las porpiedades id, estilo y contenido");
+	  };
+	}else if(tipoIdentificador.equals("CampoTexto")) {
+	  if(!(tipoAsignacion.equals("Id")|tipoAsignacion.equals("Estilo")|tipoAsignacion.equals("Muestra")|tipoAsignacion.equals("Valor"))) {
+		addErrorSemantico(beginLine,"Al "+tipoIdentificador+" "+Token+" se le esta asignando una propiedad "+tipoAsignacion+", Pero solo se permite las porpiedades id, estilo, muestra y valor");
+	  };
+	}else if(tipoIdentificador.equals("Selector")) {
+	  if(tipoAsignacion.equals("Texto")|tipoAsignacion.equals("Contenido")) {
+		addErrorSemantico(beginLine,"Al "+tipoIdentificador+" "+Token+" se le esta asignando una propiedad "+tipoAsignacion+", la cual no es permitida para el selector");
+	  };
+	}
+  }
+  */
+  
+  private static Hashtable HMSymbolTable= new Hashtable();
+  public static Hashtable getTablaSimbolos() {
+    return HMSymbolTable;
+  }
+  public static void main(String args []) throws ParseException
+  {
+
+
+ 
+/*
+	try
+	{
+	  System.out.println("ANALIZADOR SINTACTICO");
+	  HMSymbolTable = new Hashtable();
+	  comp analizador = new comp(System.in);
+      SimpleNode var = analizador.Programa();
+          
+          Enumeration t = HMSymbolTable.keys();
+
+          while ( t.hasMoreElements() == true ) { 
+
+               String temp = (String)t.nextElement();
+               TS temp2 = (TS)HMSymbolTable.get(temp);
+               System.out.println("-----");
+               if ( temp2.tipoDato != null )
+                 System.out.println(" tipo = " + temp2.tipoDato);
+               if ( temp2.valor != null )
+                 System.out.println(" valor = " + temp2.valor);
+
+         }
+	  */
+
+  try {
+
+System.out.println("ANALIZADOR SINTACTICO");
+	  comp analizador = new comp(System.in);
+	  SimpleNode nodo;
+	  nodo=Programa();
+	  nodo.dump("");
+
+	  
+	  //analizador.Programa();
+      System.out.println(acumuladorErrores);
+	  System.out.println("Se ha compilado con éxito");
+
+
+         
+    }
+
+
+	catch(ParseException e)
+	{
+	  System.err.println("Se han encontrado errores");
+	  System.err.println(e.getMessage());
+	  
+	}
+	catch(Exception e)
+	{
+	  System.err.println("Se han encontrado errores");
+	  System.err.println(e.getMessage());
+	  
+	}
+
+  }
+
+public static void error_skipto()
+{
+  ParseException e = generateParseException(); // generate the exception object.
+  acumuladorErrores+="\n Se han encontrado errores sintacticos:"+e.toString();
+  Token t=new Token();
+  
+  do
+  {
+        t = getNextToken();
+  }
+  while (t.kind != TERMINALLINEA && t.kind!=EOF );
+}//
+
+
+//valida 
+static public boolean validar(Token token)
+{
+boolean val=false;
+
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(token.image))
+{
+  val=true;
+}
+  
+}
+
+if(val==true)
+{
+acumuladorErrores+="Error Semantico:esta variable ya se encuentra declarada: "+token.image+" En la Linea "+token.beginLine+",en la columna "+token.beginColumn+ "\n";
+return false;
+}
+else
+return true; 
+}//
+
+
+static public boolean validar1(Token token)
+{
+boolean val=false;
+
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(token.image))
+{
+  val=true;
+}
+  
+}
+if(val==true) 
+  return true;
+else
+return false;
+  
+  
+}//
+
+
+
+
+// token  inicializado y declarado
+static void valorinicializado(Token t) {
+boolean valor=false;
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(t.image))
+{
+  valor=true;
+}
+  
+}
+
+if(valor==false)
+{
+acumuladorErrores+="Error Semantico:  no se encuentra declarada : "+t.image+" En la Linea "+t.beginLine+",en la columna "+t.beginColumn+ "\n";
+}
+
+if(valor==true) {
+if(!buscarTipo(t.image).equals("Cadena"))
+acumuladorErrores+="Error Semantico: la variable debe de ser tipo cadena : "+t.image+" En la Linea "+t.beginLine+",en la columna "+t.beginColumn+ "\n";
+
+
+}
+
+
+
+}//cierra funcion
+
+
+static String buscarTipo(String token)
+{
+  String dato=" "; 
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(token))
+{
+dato=variables.get(i).getTipo();
+} 
+}
+
+ return dato;  
+}//
+
+
+static void analizar(Token a, Token b ,Token operador) {
+String d1=" ";
+String d2=" ";
+
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(a.image))
+{
+  d1=buscarTipo(a.image);
+}
+
+if(variables.get(i).getNombre().equals(b.image))
+{
+  d2=buscarTipo(b.image);
+}
+
+}
+if(a.image!=null&&b.image!=null)
+{
+  
+
+if(!d1.equals(d2)) {
+acumuladorErrores+="Error Semantico:  no son del mismo tipo las variables: "+a.image+" En la Linea "+a.beginLine+" en la columna "+a.beginColumn+ "\n";
+acumuladorErrores+="Error Semantico:  no son del mismo tipo las variables: "+b.image+" En la Linea "+b.beginLine+" en la columna "+b.beginColumn+ "\n";
+}
+
+if("<=".equals(operador.image)||">=".equals(operador.image)||"<".equals(operador.image)||" >".equals(operador.image) )
+{
+if(!d1.equals("Numero"))
+acumuladorErrores+="Error Semantico:  no se puede operar una cadena con este operador: "+operador.image+"  "+a.image+" En la Linea "+a.beginLine+",en la columna "+a.beginColumn+ "\n";
+
+if(!d2.equals("Numero"))
+acumuladorErrores+="Error Semantico:  no se puede operar una cadena con este operador "+operador.image+"    "+b.image+" En la Linea "+b.beginLine+",en la columna "+b.beginColumn+ "\n";
+}
+
+}
+
+
+
+}//
+
+static void verificar_asig(Token a,Token b)
+{
+  
+String dato1=" ",dato2="";
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(a.image))
+{
+  dato1=buscarTipo(a.image);
+}
+
+if(variables.get(i).getNombre().equals(b.image))
+{
+  dato2=buscarTipo(b.image);
+}
+
+}
+
+if(!dato1.equals(dato2)) {
+acumuladorErrores+="Error Semantico: no se  le puede asignar a esta variable: "+a.image+" no son del mismo tipo: "+" En la Linea "+a.beginLine+" en la columna "+a.beginColumn+ "\n";
+acumuladorErrores+="Error Semantico: no se puede asignar: "+b.image+" En la Linea "+b.beginLine+" en la columna "+b.beginColumn+ "\n";
+}
+else {
+
+asignar(a.image);
+  }
+
+
+
+  
+  
+}//
+
+
+
+
+static void asignar(String a) {
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(a))
+{
+  variables.get(i).setAsignacion(true);
+}
+}
+
+
+
+}//
+
+
+
+static void mirarinicializacion(Token a) {
+
+
+for(int i=0;i<variables.size();i++)
+{
+if(variables.get(i).getNombre().equals(a.image))
+{
+  if(variables.get(i).getAsignacion()==false)
+acumuladorErrores+="Error Semantico: no se  encuentra inicializada la variable "+a.image+" En la Linea "+a.beginLine+" en la columna "+a.beginColumn+ "\n";  
+}
+}
+
+
+
+}//
+
+static void valores(Token a) {
+
+	for (int i = 0; i < sumar.size(); i++) {
+		System.out.println(sumar.get(i).image);
+	}
+	
+	System.out.println("-----------------");
+
+
+ String tipo=buscarTipo(a.image);
+Boolean entro=false;
+   for(int i=1;i<sumar.size();i++)
+   {
+
+      if(!sumar.get(i).image.equals("+")&&!sumar.get(i).image.equals("-")&&!sumar.get(i).image.equals("*")&&!sumar.get(i).image.equals("/")&&!sumar.get(i).image.equals("]") ) {
+             String tipo2=buscarTipo(sumar.get(i).image);
+
+             if(!tipo.equals(tipo2)&&validar1(sumar.get(i))==true) { 
+   			acumuladorErrores+="Error Semantico: no se puede asignar esta variable "+sumar.get(i).image+" En la Linea "+sumar.get(i).beginLine+" en la columna "+sumar.get(i).beginColumn+" no es del mismo tipo: "+tipo2+" con la variaable:\t "+a.image+"de tipo: " +tipo+ "\n";
+   			entro=true;
+   			}else
+   			mirarinicializacion(sumar.get(i));		 
+      }
+    }
+
+if(!entro) {
+asignar(a.image);
+  }
+
+     }//
+
+
+
+
+
+
+  
+
+
+
+
+  
+}
+
+
+
+PARSER_END(comp)
+
+/* Espacio en blanco, saltos de linea, tabulares */
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+
+TOKEN : /* OPERATORS */
+{
+  < SUMA : "+" >
+| < RESTA: "-" >
+| < MULTIPLICACION : "*" >
+| < DIVISION: "/" >
+}
+
+TOKEN : /* ASIGNACION */
+{
+
+    < ASIGNACION : "=" >
+}
+
+TOKEN : /* CONCATENAR */
+{
+  < CONCATENAR : "@" >
+
+}
+
+TOKEN : /* COMENTARIOS, INICIA CON ## SEGUIDO DE CUALQUIER CANTIDAD DE LETRAS, NUMEROS Y SIMBOLOS Y TERMINA CON #*/
+{
+  < COMENTARIO: "#""#" (  ~["#"] )* "#""#" >
+}
+  
+TOKEN : /* TEXTO DE CADENA, INICIA CON '' SEGUIDO DE CUALQUIER CANTIDAD DE LETRAS, NUMEROS Y SIMBOLOS Y TERMINA CON ''*/
+{
+  < TEXTOCADENA: "\""(~["\""])*"\"" >
+}
+
+TOKEN : /*SIMBOLOS*/
+{
+  	< ABRIRCORCHETE : "[" >
+|   < CERRARCORCHETE : "]" >
+|   < ABRIRLLAVE: "{" >
+|   < CERRARLLAVE:"}" >
+|   < TERMINALLINEA : "." >
+| 	< SEPARADOR : "," >
+|   <FINARCH: "?">   
+}
+
+
+
+TOKEN : /*PALABRAS RESERVADAS*/
+{
+  < PALABRARESERVADANUMERO: "Numero" >
+| < PALABRARESERVADACADENA: "Cadena" >
+| < ESCRIBIR: "Escribir">
+| < LEER: "Leer">
+| < SI:"Si" >
+| < SINO:"Sino">
+| < FINSI:"Finsi">
+| < ENTONCES:"Entonces" >
+| < PALABRARESERVADAMIENTRAS: "Mientras" >
+| < PALABRARESERVADAMETODO:"Metodo">
+| < PALABRARESERVADAVACIO:"VACIO" >
+}
+
+TOKEN : /*NUMEROS EJEMPLO 1, 1234, 987*/
+{
+     < NUMERO : (< DIGIT >)+ >
+| 	< #DIGIT : [ "0"-"9" ] >
+}
+
+TOKEN : /* OPERADORES LOGICOS*/
+{
+  < OPERADORLOGICOY: "&" >
+| < OPERADORLOGICOO: "|" >
+}
+
+TOKEN : /* OPERADORES RELACIONALES*/
+{
+  < OPERADORRELACIONALMENQ: "<" >
+| < OPERADORRELACIONALMAYQ: ">" >
+| < OPERADORRELACIONALMENIG: "<=" >
+| < OPERADORRELACIONALMAYIG: ">=" >
+| < OPERADORRELACIONALIGUIG: "==" >
+| < OPERADORRELACIONALDIFER: "<>" >
+}
+
+
+TOKEN : /*IDENTIFICADORES EJEMPLO a, casa, clase1*/
+{
+	 < IDENTIFICADOR :  ( ["a"-"z","A"-"Z","_"])  ( ["a"-"z","A"-"Z","0"-"9","_"] )* >
+}
+
+
+
+SimpleNode Programa():{}
+{  listadoSentencia() <EOF> { return jjtThis; }
+  
+}
+
+
+void listadoSentencia(): { }
+{
+      
+ //Sentencia()[listadoSentencia()] 
+      (Sentencia() (Sentencia() )*  )
+}
+
+
+void Sentencia(): { Token t; }
+{
+  try {
+  LOOKAHEAD(2)declaracion()|
+  LOOKAHEAD(3)asignacion()|
+ Escribir() |
+  leer()     |
+ sentenciaIf()  
+  
+     } catch (ParseException e){
+    error_skipto();
+  }        
+  
+}
+
+
+
+void declaracion(): {Token t; v=new variable(); }
+{
+  tipoDato() t=<IDENTIFICADOR> { jjtThis.value =t.image; if(validar(t)) {v.setTipo(tipo);v.setNombre(t.image);v.setTokenvalor(t);v.setAsignacion(false);variables.add(v);}    }#IDEN(true)[masid()]t=<TERMINALLINEA>{ jjtThis.value =t.image;}#PUNTO(true)
+}
+
+void masid():{Token t;  v=new variable();}
+{
+  t=<SEPARADOR> { jjtThis.value=t.image;}#COMA(true) t=<IDENTIFICADOR> {jjtThis.value=t.image; if(validar(t)) {v.setTipo(tipo);v.setNombre(t.image);v.setTokenvalor(t);v.setAsignacion(false);variables.add(v); } }#IDEN(true)[masid()] 
+}
+
+
+
+void tipoDato(): {Token t;}
+{
+ LOOKAHEAD(3)  t=<PALABRARESERVADANUMERO>{ jjtThis.value=t.image;tipo=t.image;}#NUM(true)  |
+ t=<PALABRARESERVADACADENA>{ jjtThis.value=t.image;tipo=t.image;}#CAD(true)  
+}
+
+
+void asignacion(): { Token t; asignar=new Token(); asignar_id=new Token(); activo=true;}
+{
+  
+  t=< IDENTIFICADOR >{ jjtThis.value=t.image;asignar=t;}#IDEN(true) t=< ASIGNACION >{ jjtThis.value=t.image;}#ASIGNACION(true) valorA()t=<TERMINALLINEA >{ jjtThis.value=t.image;if(sumar.size()==0&&asignar_id.image!=null){ verificar_asig(asignar,asignar_id); }valores(asignar);sumar.clear();activo=false;}#PUNTO(true)  
+  //id=<IDENTIFICADOR>{jjtThis.value = id.image;tb=(TS) HMSymbolTable.get(id.image);if(tb==null) addErrorSemantico(id.beginLine,"la Variabe: "+id.image+" No esta declarada previamente");}#IDENTIFICADOR(true)(<PUNTO> tipoAsignacion=tipoAsignacion() { if(tb!=null) validarTipoAsignacion(id.beginLine,id.image,tipoAsignacion,tb.getTipoDato()); }|< PASO > composicion())
+}
+
+
+//sentencia if
+
+void sentenciaIf(): {Token t;Dato1=new Token();Dato2=new Token();operador_if= new Token();pos=0;activoif=true; }
+{
+  t=< SI >{ jjtThis.value=t.image;}#Si(true)operacion()simbolo()operacion()t=< ENTONCES >{ jjtThis.value=t.image; analizar(Dato1,Dato2,operador_if);activoif=false;}#ENTONCES(true)listadoSentencia()[t=< SINO >{ jjtThis.value=t.image;}#Sino(true)listadoSentencia()]t=< FINSI >{ jjtThis.value=t.image;}#FinSi(true)
+}
+
+
+void simbolo(): {Token b; }
+{
+  b=< OPERADORRELACIONALMENQ >{ jjtThis.value=b.image;operador_if=b;}#MENOR(true)|b=< OPERADORRELACIONALMAYQ >{ jjtThis.value=b.image;operador_if=b;}#MAYOR(true)|b=< OPERADORRELACIONALMENIG >{ jjtThis.value=b.image;operador_if=b;}#MENORIGUAL(true)| b=< OPERADORRELACIONALMAYIG >{ jjtThis.value=b.image;operador_if=b;}#MAYORIGUAL(true)|b=< OPERADORRELACIONALIGUIG >{ jjtThis.value=b.image;operador_if=b;}#IGUAL(true)|b=< OPERADORRELACIONALDIFER >{jjtThis.value=b.image;operador_if=b;}#DIFERENTE(true)
+}
+
+void expresion():{ }
+{
+  termino () (addOp () )*
+
+}
+
+
+
+void termino(): { }
+{
+  factor()[listaoperacionMult()] 
+}
+
+
+void factor(): {Token t; }
+{
+
+
+    t=<ABRIRCORCHETE >{ jjtThis.value=t.image;sumar.add(t);}#ABRIRCORCHETE(true)  valorA()t=< CERRARCORCHETE >{ jjtThis.value=t.image;sumar.add(t);}#CERRARCORCHETE(true)          | 
+    t=<NUMERO>{ jjtThis.value=t.image;sumar.add(t); if(asignar!=null) {  if(!buscarTipo(asignar.image).equals("Cadena")){asignar(t.image); } } }#NUM(true) |
+     t=<IDENTIFICADOR > { jjtThis.value=t.image;pos++;if(Dato1!=null){  if(Dato1.image==null&&pos==1)Dato1=t;  if(Dato2.image==null&&pos==2)Dato2=t;  sumar.add(t); }  if(!activoif){   valorinicializado(t); } asignar_id=t;if(!activo) { mirarinicializacion(t); } sumar.add(t);  }#IDEN(true) 
+}
+
+
+void listaoperacionMult(): { }
+{
+  multOp()factor()[listaoperacionMult()]
+}
+
+
+void valorA(): { }
+{
+   leer() | operacion()|valor()
+}
+
+void leer(): {Token t;  }
+{
+ t= < LEER >{ jjtThis.value=t.image;}#LEER(true) t=< ABRIRCORCHETE >{ jjtThis.value=t.image;}#ABRIRCORCHETE(true)t=< CERRARCORCHETE >{ jjtThis.value=t.image; asignar(asignar.image); }#CERRARCORCHETE(true) //if activo
+}
+
+void operacion(): { }
+{
+  termino()[listaoperacionsuma()]
+}
+
+void listaoperacionsuma(): {Token t; }
+{
+  t="+"{ jjtThis.value=t.image;sumar.add(t);}#SUMA(true) termino()[listaoperacionsuma()] 
+}
+
+
+void multOp (): {Token t; }
+{
+  t="*"{ jjtThis.value=t.image;sumar.add(t);}#MULTIPLICAR(true) |t= "/"{ jjtThis.value=t.image;sumar.add(t);}#DIVIDIR(true)
+}
+
+void addOp (): {Token t ; }
+{
+  t="+"{ jjtThis.value=t.image;sumar.add(t);}#SUMA(true) | t="-"{ jjtThis.value=t.image;sumar.add(t);}#RESTA(true)
+}
+
+
+
+void Escribir(): { Token t; }
+{
+  t=< ESCRIBIR> { jjtThis.value=t.image;}#Escribir(true)t=<ABRIRCORCHETE>{ jjtThis.value=t.image;}#ABRIRCORCHETE(true) valor()t=<CERRARCORCHETE>{ jjtThis.value=t.image;}#CERRARCORCHETE(true) t=<TERMINALLINEA>{ jjtThis.value=t.image;}#PUNTO(true)
+}
+
+void valor(): {Token t; }
+{
+ t= < TEXTOCADENA >{ jjtThis.value=t.image;}#TEXOCADENA(true)[concatenacion()] 
+}
+
+void concatenacion(): {Token t; }
+{
+t=< CONCATENAR >{ jjtThis.value=t.image;}#CONCATENAR(true) valoraux()[concatenacion()]
+}  
+
+void valoraux(): {Token t; }
+{
+  t=< IDENTIFICADOR >{ jjtThis.value=t.image;if(!activoif) { valorinicializado(t); } if(!activo) { mirarinicializacion(t); }sumar.add(t); }#IDEN(true) |  t=<NUMERO> { jjtThis.value=t.image;if(asignar!=null){  if(!buscarTipo(asignar.image).equals("Cadena")){asignar(t.image); } }   }#NUM(true)|t=< TEXTOCADENA >{ jjtThis.value=t.image;}#TEXTOCADENA(true)
+}
+
+
+
+/*String tipoAsignacion(): { Token d;String tipoEstilo; String tipoValor; }
+{
+d=<ID>{jjtThis.value = d.image;} <PASO >d=<SECUENCIA_CARACTERES>{jjtThis.value = d.image;return "Id";} #VALORID(true)
+|d=<ESTILO>{jjtThis.value = d.image;}<PUNTO>tipoEstilo=tipoEstilo()< PASO > tipoValor=valorEstilo() { validarTipoEstilo(d.beginLine,tipoEstilo,tipoValor); return "Estilo"; }
+|d=<TEXTO>{jjtThis.value = d.image;}<PASO>palabraTexto() { return "Texto"; }
+|d=<MUESTRA>{jjtThis.value = d.image;}<PASO>d=<CADENAS> { jjtThis.value = d.image;return "Muestra"; } #VALORMUESTRA(true)
+|d=<VALOR>{jjtThis.value = d.image;}<PASO>d=<CADENAS> { jjtThis.value = d.image; return "Valor"; }#VALOR(true)
+|d=<CANTIDAD>{jjtThis.value = d.image;}<PASO>d=<NUMERO> { jjtThis.value = d.image;return "Cantidad"; }#CANTIDAD(true)
+|d=<SELECCIONADO>{jjtThis.value = d.image;}<PASO>(d=<NUMERO>{ jjtThis.value = d.image; }#VALOR(true)|d=< SECUENCIA_CARACTERES >{ jjtThis.value = d.image; }#VALOR(true) ) { return "Seleccionado";}
+|d=<VALORINTERNO>{jjtThis.value = d.image;}<PASO>palabraValorInterno() { return "ValorInterno";}
+|d=<VALOREXTERNO>{jjtThis.value = d.image;}<PASO>palabraValorExterno() { return "ValorExterno";}
+|d=<CONTENIDO>{jjtThis.value = d.image;}<PASO>composicion() { return "Contenido"; }
+}
+{
+  a=<HEXADECIMAL> {jjtThis.value = a.image;return "Color";}|nombreFuente() { return "Fuente";}|aux=tamPixel() { return aux;}
+}
+*/
+
+
+
