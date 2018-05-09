@@ -7,7 +7,7 @@ public class Variable {
 	private int num;
 	private String token;
 	private Token lexema;
-	private Object valor;
+	private boolean valor;
 	private String tipo;
 	
 	public Variable(int num, String token, Token pieza) {
@@ -21,7 +21,7 @@ public class Variable {
 	
 	
 
-	public Variable(String token, Token lexema, Object valor, String tipo) {
+	public Variable(String token, Token lexema, boolean valor, String tipo) {
 		super();
 		this.token = token;
 		this.lexema = lexema;
@@ -59,13 +59,13 @@ public class Variable {
 
 
 
-	public Object getValor() {
+	public boolean getValor() {
 		return valor;
 	}
 
 
 
-	public void setValor(Object valor) {
+	public void setValor(boolean valor) {
 		this.valor = valor;
 	}
 

@@ -52,13 +52,20 @@ public class TablaSimbolos {
 	public boolean tieneValor(String token) {
 		for (Variable v : tabla) {
 			if (token.equals(v.getToken())) {
-				return v.getValor() != null ? true : false;
+				return v.getValor();
 			}
 		}
+		System.out.println("*** No se encontro valor para " + token + " ***");
 		return false;
 	}
-	
-	
+
+	public void actualizarValor(String token) {
+		for (Variable v : tabla) {
+			if (token.equals(v.getToken())) {
+				v.setValor(true);
+			}
+		}
+	}
 
 	/**
 	 * Comprobar que dos tokens sean del mismo tipo
@@ -67,94 +74,147 @@ public class TablaSimbolos {
 	 * @param token2
 	 * @return
 	 */
-	public boolean compatibles(String token1, String token2) {
-		// TODO determinar si es necesario capturar si llega null
-		return (obtenerVariable(token1).getTipo().equals(obtenerVariable(token2)));
+	public String AritCompatibles(String tipo1, String tipo2) {
+
+		// System.out.println("(AritCompatibles) Tipo1: " + tipo1 + " Tipo2: " +
+		// tipo2);
+
+		if (tipo1 != "null" && tipo2 != "null") {
+			if (tipo1.equals("Numero") && tipo2.equals("Numero")) {
+				return "Numero";
+			}
+		}
+
+		//
+		if (!tipo1.equals("null")) {
+			return tipo1;
+		}
+
+		//
+		if (!tipo2.equals("null")) {
+			return tipo2;
+		}
+
+		return "none";
 	}
 
 	/**
 	 * De acuerdo al tipo de dato de un token comprobar que operaciones logicas
 	 * se pueden realizar con el.
 	 * 
-	 * @param token1
-	 * @param token2
+	 * @param tipoToken1
+	 * @param tipoToken2
 	 * @param operador
 	 * @return
 	 */
-	public boolean operadorPermitido(String token1, String token2, String operador) {
-		if (!compatibles(token1, token2)) {
+	public boolean operadorPermitido(String tipoToken1, String tipoToken2, String operador) {
+
+		boolean iguales = tipoToken1.equals(tipoToken2);
+
+		if (iguales) {
+
+			if (tipoToken1.equals("Cadena")) {
+				if (!operador.equals("==") || !operador.equals("!=")) {
+					// aca reportar error - Operador no es compatible con Cadena
+					System.out.println("OperadorPermitido? para tipos " + tipoToken1 + " con operador " + operador);
+				}
+			} else if (tipoToken1.equals("Numero")) {
+				// Partiendo de que solo se tienen restricciones con el cadena
+				// ...
+				// si es un Numero no se restringe nada.
+				return true;
+			}
+
 			return false;
-		}
 
-		// Como ambas se supone son del mismo tipo
-		Variable t = obtenerVariable(token1);
-
-		if (t.getTipo().equals("Cadena")) {
-			return (operador.equals("==") || operador.equals("!="));
 		} else {
-			// Partiendo de que solo se tienen restricciones con el cadena ...
-			// si es un Numero no se restringe nada.
-			return true;
+			// aca reportar error - operandos no son compatibles
+			System.out.println("Condicionadores no compatibles ");
 		}
+
+		return false;
 
 	}
-	
-	//TODO - Revisar que estos metodos para facilitarle trabajo a JAVACC	
-	
+
+	// TODO - Revisar que estos metodos para facilitarle trabajo a JAVACC
+
 	/**
 	 * FAcilitar el agregado de token a la tabla y evitar sintaxis en javaCC
+	 * 
 	 * @param token
 	 * @param lexema
 	 * @param valor
 	 * @param tipo
 	 */
-	public void agregar(String token, Token lexema, Object valor, String tipo){
-		//tabla.add(new Variable(token, lexema, valor, tipo));
-		if(!existe(lexema.image)) {
-			tabla.add(new Variable(lexema.image,lexema,null,tipo));
-		  }else {
-			//aca reportar error
-			 System.out.println("Error Agregando " + token + " ya esta definido");
-		  }
+	public void agregar(String token, Token lexema, boolean valor, String tipo) {
+		// tabla.add(new Variable(token, lexema, valor, tipo));
+		if (!existe(lexema.image)) {
+			tabla.add(new Variable(lexema.image, lexema, false, tipo));
+		} else {
+			// aca reportar error
+			System.out.println("Error Agregando " + token + " ya esta definido");
+		}
 	}
-	
+
 	/**
-	 * Validaciones semanticas que se ocurren en el momento de usar una sentencia imprimir
+	 * Validaciones semanticas que se ocurren en el momento de usar una
+	 * sentencia imprimir
+	 * 
 	 * @param token
+	 * @param accion
+	 *            imprimir | asignar
+	 * @return
 	 */
-	public void validoUsar(Token token){
+	public boolean validoUsar(Token token, String accion) {
 		boolean existe = existe(token.image);
 		boolean valor = tieneValor(token.image);
-		
-		if (!existe){
-			//agregar a tabla de Errores
-			System.out.println(token.image + " no esta definida");
-		}
-		
-		if (!valor){
-			//agregar a tabla de Errores
-		}	System.out.println("Para usar " + token.image + " debe tener un valor");
-	}
-	
-	public void validoAsignar(Token token){
-		boolean existe = existe(token.image);
-		if(!existe){
-			//agregar a tabla de errores
-			System.out.println(token.image + " no esta definida");
-		}else{
-			//asignar valor aca.
-		}
-	}
-	
-	public void prueba(Token t){
-		//t.
-	}
-	
-	
-	
-	
-	
 
-	
+		if (!existe) {
+			// agregar a tabla de Errores
+			System.out.println(token.image + " no esta definida");
+		}
+
+		if (!valor) {
+			if (!accion.equals("asignar")) {
+				// agregar a tabla de Errores
+				System.out.println("Para usar " + token.image + " debe tener un valor ACCION = " + accion);
+			}
+		}
+
+		return existe && valor;
+	}
+
+	public String obtenerTipo(Token t) {
+		// System.out.println("obtenerTipo para " + t.image );
+		if (existe(t.image)) {
+			for (Variable v : tabla) {
+				if (v.getToken().equals(t.image)) {
+					return v.getTipo();
+				}
+			}
+		}
+		return "null";
+	}
+
+	public void validoAsignar(Token token, String tipo) {
+		boolean existe = existe(token.image);
+		boolean tipoValido = obtenerTipo(token).equals(tipo) && !tipo.equals("null");
+		if (!existe) {
+			// agregar a tabla de errores
+			System.out.println(token.image + " no esta definida");
+		}
+		if (!tipoValido) {
+			// agregar a tabla de errores
+			System.out.println(token.image + "  tiene un tipo no valido " + tipo);
+		}
+
+		if (existe && tipoValido) {
+			actualizarValor(token.image);
+		}
+	}
+
+	public ArrayList<Variable> getTabla() {
+		return tabla;
+	}
 
 }

@@ -7,10 +7,13 @@ import co.edu.uniquindio.compiladores.frontend.lexico.ParseException;
 import co.edu.uniquindio.compiladores.frontend.lexico.SimpleNode;
 import co.edu.uniquindio.compiladores.frontend.lexico.TokenMgrError;
 import co.edu.uniquindio.compiladores.utils.Impresion;
+import co.edu.uniquindio.compiladores.utils.TablaSimbolos;
+import co.edu.uniquindio.compiladores.utils.Variable;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -164,7 +167,7 @@ public class Ventana extends javax.swing.JFrame {
         });
         jToolBar1.add(bGuardarComo);
 
-        bCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/acerca_devs.png"))); // NOI18N
+        bCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/run.png"))); // NOI18N
         bCompilar.setToolTipText("¡Compilar!");
         bCompilar.setFocusable(false);
         bCompilar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -261,6 +264,7 @@ abrirJFileChooser();
 
     private void bCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCompilarActionPerformed
        ejecutar();
+       
     }//GEN-LAST:event_bCompilarActionPerformed
 
     private void bAcercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAcercaActionPerformed
@@ -340,6 +344,8 @@ abrirJFileChooser();
                     colorConsola(Color.BLUE);
                     String consola = "Analisis Sintáctico realizado con exito.";
                     jTxtAreaConsola.setText(consola);
+                    
+                    imprimirTabla(sintacticoA);
                 } else {
                     colorConsola(Color.RED);
                     String consola = Impresion.imprimirErrores(sintacticoA.getErrores());
@@ -497,6 +503,17 @@ abrirJFileChooser();
         rutaArchivo = "";
         
         permitirAnalizar = false;
+    }
+
+    private void imprimirTabla(Analizador sintacticoA) {
+        System.out.println("******* Tabla de Simbolos *******");
+        
+        ArrayList<Variable> tabla = sintacticoA.getTablaSimbolos().getTabla();
+
+        for(Variable v : tabla){
+            System.out.println("TOKEN " + v.getToken() + " TIPO " + v.getTipo() + " ¿TIENE VALOR? " + v.getValor());
+        }
+        
     }
 
 }
