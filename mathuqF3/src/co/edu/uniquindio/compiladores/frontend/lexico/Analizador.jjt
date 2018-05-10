@@ -23,6 +23,7 @@ public class Analizador
    private ArrayList<Variable> variables;
    private ArrayList<ParseException> errores;
    private TablaSimbolos tabla;
+   private Token tmp;
 
 
    public TablaSimbolos getTablaSimbolos() {
@@ -265,24 +266,25 @@ void imprimir(String accion):
 }
 
 void asignarVar(String accion):
-{Token t; Token id;String tipo = "null";}
+{Token t; Token id;Variable var;}
 {
   try {
-    (  		id=<IDENTIFICADOR> {jjtThis.value = id.image;} #IDENTIFICADOR(true) t=<ASIGNACION> {jjtThis.value = t.image;} #ASIGNACION(true)  tipo = tipoAsignacion(id,accion) t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
+    (  		id=<IDENTIFICADOR> {jjtThis.value = id.image;} #IDENTIFICADOR(true) t=<ASIGNACION> {jjtThis.value = t.image;} #ASIGNACION(true)  var = tipoAsignacion(id,accion) t=<FIN_LINEA> {jjtThis.value = t.image;} #FIN_LINEA(true)
 	)
-	  {	    
-	    tabla.validoAsignar(id,tipo);
+	  {
+	    //System.out.println("La accion en AsignarVar es " + accion );    
+	    tabla.validoAsignar(id,var);
 	  }
 }catch(ParseException e) {
     errorSaltar(FIN_LINEA);
 }
 }
 
-String tipoAsignacion(Token t,String accion) throws ParseException:
-{String tipo = "null";}
+Variable tipoAsignacion(Token t,String accion) throws ParseException:
+{Variable var;}
 { 
  // leer() |  LOOKAHEAD(2) contactenacion() | operacionMat()
- leer() { return tabla.obtenerTipo(t); } | tipo = valor(accion) { return tipo;} 
+ leer() { return tabla.var(t,tabla.obtenerTipo(t));} | var = valor(accion) { return var;} 
 }
 
 
@@ -297,26 +299,26 @@ void condicion():
 }
 
 void grupoCondiciones() throws ParseException:
-{Token t;String tipoT1  = "null"; String tipoT2 = "null";}
+{Token t;Variable var1; Variable var2;}
 {
-  (  	tipoT1 = valor("condicion") t=<RELACIONALES> {jjtThis.value = t.image;} #OPERADOR_RELACIONAL(true) tipoT2 = valor("condicion")
+  (  	var1 = valor("condicion") t=<RELACIONALES> {jjtThis.value = t.image;} #OPERADOR_RELACIONAL(true) var2 = valor("condicion")
   )
   {
 	//aqui la validacion de grupo de condiciones
-	tabla.operadorPermitido(tipoT1,tipoT2,t.image);
+	tabla.operadorPermitido(var1,var2,t.image);
   }
 }
 
-String valor(String accion) throws ParseException:
-{Token t; String tipo = "null";}
+Variable valor(String accion) throws ParseException:
+{Token t; Variable var;}
 {   
-  tipo = operacionMat(accion) { return tipo; } |contactenacion(accion) { return "Cadena";}
+  var = operacionMat(accion) { return var; } |contactenacion(accion) { return tabla.var("Cadena");}
 }
 
-String valor2(String accion) throws ParseException:
+Variable valor2(String accion) throws ParseException:
 {Token t;}
 {   
-  t=<IDENTIFICADOR> {jjtThis.value = t.image;tabla.validoUsar(t,accion); return tabla.obtenerTipo(t);} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;return "Numero";} #ENTERO(true)
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;tabla.validoUsar(t,accion); return tabla.var(t,tabla.obtenerTipo(t));} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;return tabla.var("Numero");} #ENTERO(true)
 }
 
 
@@ -326,32 +328,32 @@ void leer() throws ParseException:
   t=<PALABRA_RESERVADA_LEER> {jjtThis.value = t.image;} #LEER(true)t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true)t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true) 
 }
 
-String operacionMat(String accion) throws ParseException:
-{String tipoT1  = "null"; String tipoT2 = "null";}
+Variable operacionMat(String accion) throws ParseException:
+{Variable var1; Variable var2=null;}
 {
-    tipoT1 = termino(accion)(operadorAdicion() tipoT2 = termino(accion))*
+    var1 = termino(accion)(operadorAdicion() var2 = termino(accion))*
  {
-   return tabla.AritCompatibles(tipoT1,tipoT2);
+   return tabla.AritCompatibles(var1,var2);
  }
 }
 
-String termino(String accion) throws ParseException:
-{String tipoT1  = "null"; String tipoT2 = "";}
+Variable termino(String accion) throws ParseException:
+{Variable var1; Variable var2=null;}
 {
-      tipoT1 = factor(accion)(operadorMult() tipoT2 = factor(accion))*
+      var1 = factor(accion)(operadorMult() var2 = factor(accion))*
   
   {
-	return tabla.AritCompatibles(tipoT1,tipoT2);
+	return tabla.AritCompatibles(var1,var2);
   }
 }
 
-String factor(String accion) throws ParseException:
-{Token t;String tipo="null";}
+Variable factor(String accion) throws ParseException:
+{Token t;Variable var;}
 {
   (
-    tipo = valor2(accion) | t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) tipo = operacionMat(accion) t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true)  )
+    var = valor2(accion) | t=<ABRIR_CORCHETE> {jjtThis.value = t.image;} #ABRIR_CORCHETE(true) var = operacionMat(accion) t=<CERRAR_CORCHETE> {jjtThis.value = t.image;} #CERRAR_CORCHETE(true)  )
   {    
-	return tipo;
+	return var;
   }
   
 }

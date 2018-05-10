@@ -9,6 +9,8 @@ public class Variable {
 	private Token lexema;
 	private boolean valor;
 	private String tipo;
+	//Determinar si es una variable(sorry por este hardcore)
+	private boolean var;
 	
 	public Variable(int num, String token, Token pieza) {
 		super();
@@ -16,7 +18,6 @@ public class Variable {
 		this.token = token;
 		this.lexema = pieza;
 	}
-	
 	
 	
 	
@@ -29,6 +30,20 @@ public class Variable {
 		this.tipo = tipo;
 	}
 
+
+	public Variable(Token lexema, String tipo) {
+		super();
+		this.lexema = lexema;
+		this.tipo = tipo;
+		this.var = true;
+	}
+
+
+	public Variable(String tipo) {
+		super();
+		this.tipo = tipo;
+		this.var = false;
+	}
 
 
 
@@ -80,6 +95,22 @@ public class Variable {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
+
+
+
+
+	public boolean isVar() {
+		return var;
+	}
+
+
+
+
+	public void setVar(boolean var) {
+		this.var = var;
+	}
+	
+	
 	
 	
 	

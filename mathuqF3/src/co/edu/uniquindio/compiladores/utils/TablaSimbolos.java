@@ -1,15 +1,40 @@
 package co.edu.uniquindio.compiladores.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import co.edu.uniquindio.compiladores.frontend.lexico.Token;
 
 public class TablaSimbolos {
 	private ArrayList<Variable> tabla;
 
+	private HashMap<Token,String> campo = new HashMap<>();
+	
+	
 	public TablaSimbolos() {
 		tabla = new ArrayList<>();
 	}
+	
+	
+	/**
+	 * Auxiliares para determinar a que token se esta operando
+	 * @param t
+	 * @param tipo
+	 * @return
+	 */
+	public Variable var(Token t , String tipo){
+		return new Variable(t, tipo);
+	}
+	
+	/**
+	 * Auxiliares para determinar a que token se esta operando
+	 * @param tipo
+	 * @return
+	 */
+	public Variable var(String tipo){
+		return new Variable(tipo);
+	}
+	
 
 	/**
 	 * Metodo auxiliar que permite obtener una variable del listado de la Tabla
@@ -74,28 +99,50 @@ public class TablaSimbolos {
 	 * @param token2
 	 * @return
 	 */
-	public String AritCompatibles(String tipo1, String tipo2) {
+	public Variable AritCompatibles(Variable var1, Variable var2) {
 
 		// System.out.println("(AritCompatibles) Tipo1: " + tipo1 + " Tipo2: " +
 		// tipo2);
+		
+		
+		
 
-		if (tipo1 != "null" && tipo2 != "null") {
+		if (var1 != null && var2 != null) {
+			
+			String tipo1 = var1.getTipo();
+			String tipo2 = var2.getTipo();
+			
 			if (tipo1.equals("Numero") && tipo2.equals("Numero")) {
-				return "Numero";
+				return var("Numero");
 			}
+			
+			if (tipo1.equals("Cadena")) {
+				// aca reportar error - Operador no es compatible con Cadena
+				//FIX - Comprobar que var1 sea variable ..
+				System.out.println("No se pueden realizar operaciones matematicas con Cadenas " + var1.getLexema().image);
+				return var("null");
+			}
+			
+			if (tipo2.equals("Cadena")) {
+				// aca reportar error - Operador no es compatible con Cadena
+				//FIX - Comprobar que var1 sea variable ..
+				System.out.println("No se pueden realizar operaciones matematicas con Cadenas " + var2.getLexema().image);
+				return var("null");
+			}
+		
 		}
 
 		//
-		if (!tipo1.equals("null")) {
-			return tipo1;
+		if (var1 != null) {
+			return var1;
 		}
 
 		//
-		if (!tipo2.equals("null")) {
-			return tipo2;
+		if (var2 != null) {
+			return var2;
 		}
 
-		return "none";
+		return null;
 	}
 
 	/**
@@ -107,16 +154,31 @@ public class TablaSimbolos {
 	 * @param operador
 	 * @return
 	 */
-	public boolean operadorPermitido(String tipoToken1, String tipoToken2, String operador) {
+	public boolean operadorPermitido(Variable var1, Variable var2, String operador) {
 
+		String tipoToken1 = var1.getTipo();
+		String tipoToken2 = var2.getTipo();
+		
 		boolean iguales = tipoToken1.equals(tipoToken2);
 
 		if (iguales) {
 
 			if (tipoToken1.equals("Cadena")) {
 				if (!operador.equals("==") || !operador.equals("!=")) {
+					
+					String t1 = "";
+					String t2 = "";					
+					
+					if(var1.isVar()){
+						t1 = var1.getLexema().image;
+					}
+					
+					if(var2.isVar()){
+						t1 = var2.getLexema().image;
+					}
+					
 					// aca reportar error - Operador no es compatible con Cadena
-					System.out.println("OperadorPermitido? para tipos " + tipoToken1 + " con operador " + operador);
+					System.out.println("Operador" + operador + " no es compatible con Cadenas (No se pueden sumar peras con manzanas) " + t1 + " " + t2 + "" );
 				}
 			} else if (tipoToken1.equals("Numero")) {
 				// Partiendo de que solo se tienen restricciones con el cadena
@@ -129,7 +191,13 @@ public class TablaSimbolos {
 
 		} else {
 			// aca reportar error - operandos no son compatibles
-			System.out.println("Condicionadores no compatibles ");
+			System.out.println("Condicionadores no compatibles para " + operador);
+			if(var1.isVar()){
+				System.out.println("para "+ obtenerVariable(var1.getLexema().image).getToken());
+			}
+			if(var2.isVar()){
+				System.out.println("para "+ obtenerVariable(var2.getLexema().image).getToken());
+			}			
 		}
 
 		return false;
@@ -196,16 +264,21 @@ public class TablaSimbolos {
 		return "null";
 	}
 
-	public void validoAsignar(Token token, String tipo) {
+	public void validoAsignar(Token token, Variable tipo) {
+		
 		boolean existe = existe(token.image);
-		boolean tipoValido = obtenerTipo(token).equals(tipo) && !tipo.equals("null");
+		boolean tipoValido = false;
+		if ( tipo != null){
+			tipoValido = obtenerTipo(token).equals(tipo.getTipo());
+		}
+		
 		if (!existe) {
 			// agregar a tabla de errores
 			System.out.println(token.image + " no esta definida");
 		}
 		if (!tipoValido) {
 			// agregar a tabla de errores
-			System.out.println(token.image + "  tiene un tipo no valido " + tipo);
+			System.out.println(token.image + "  no se le puede asignar un " + tipo.getTipo() + " linea " + token.beginLine);
 		}
 
 		if (existe && tipoValido) {
