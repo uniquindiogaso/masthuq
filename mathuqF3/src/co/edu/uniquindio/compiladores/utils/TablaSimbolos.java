@@ -154,17 +154,18 @@ public class TablaSimbolos {
 	 * @param operador
 	 * @return
 	 */
-	public boolean operadorPermitido(Variable var1, Variable var2, String operador) {
+	public boolean operadorPermitido(Variable var1, Variable var2, Token ope) {
 
 		String tipoToken1 = var1.getTipo();
 		String tipoToken2 = var2.getTipo();
+		String operador = ope.image;
 		
 		boolean iguales = tipoToken1.equals(tipoToken2);
 
 		if (iguales) {
 
 			if (tipoToken1.equals("Cadena")) {
-				if (!operador.equals("==") || !operador.equals("!=")) {
+				if (!operador.equals("==") && !operador.equals("!=")) {
 					
 					String t1 = "";
 					String t2 = "";					
@@ -178,7 +179,7 @@ public class TablaSimbolos {
 					}
 					
 					// aca reportar error - Operador no es compatible con Cadena
-					System.out.println("Operador" + operador + " no es compatible con Cadenas (No se pueden sumar peras con manzanas) " + t1 + " " + t2 + "" );
+					System.out.println("Operador" + operador + " no es compatible con Cadenas (No se pueden sumar peras con manzanas) " + t1 + " " + t2 + "" + ope.beginLine);
 				}
 			} else if (tipoToken1.equals("Numero")) {
 				// Partiendo de que solo se tienen restricciones con el cadena
@@ -191,12 +192,12 @@ public class TablaSimbolos {
 
 		} else {
 			// aca reportar error - operandos no son compatibles
-			System.out.println("Condicionadores no compatibles para " + operador);
-			if(var1.isVar()){
-				System.out.println("para "+ obtenerVariable(var1.getLexema().image).getToken());
+			System.out.println("Condicionadores no compatibles para " + operador + " en linea " + ope.beginLine);
+			if(var1.isVar() && var1.getLexema() != null){
+				System.out.println("para "+ var1.getLexema().image+ " : " + var1.getLexema().beginLine);
 			}
-			if(var2.isVar()){
-				System.out.println("para "+ obtenerVariable(var2.getLexema().image).getToken());
+			if(var2.isVar() && var2.getLexema() != null){
+				System.out.println("para "+ var2.getLexema().image + " : " + var2.getLexema().beginLine);
 			}			
 		}
 
@@ -239,13 +240,13 @@ public class TablaSimbolos {
 
 		if (!existe) {
 			// agregar a tabla de Errores
-			System.out.println(token.image + " no esta definida");
+			System.out.println(token.image + " no esta definida: " + token.beginLine);
 		}
 
 		if (!valor) {
 			if (!accion.equals("asignar")) {
 				// agregar a tabla de Errores
-				System.out.println("Para usar " + token.image + " debe tener un valor ACCION = " + accion);
+				System.out.println("Para usar " + token.image + " debe tener un valor [ACCION = " + accion+"] : " + token.beginLine);
 			}
 		}
 
@@ -274,7 +275,7 @@ public class TablaSimbolos {
 		
 		if (!existe) {
 			// agregar a tabla de errores
-			System.out.println(token.image + " no esta definida");
+			System.out.println(token.image + " no esta definida: " + token.beginLine);
 		}
 		if (!tipoValido) {
 			// agregar a tabla de errores

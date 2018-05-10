@@ -23,7 +23,7 @@ public class Analizador
    private ArrayList<Variable> variables;
    private ArrayList<ParseException> errores;
    private TablaSimbolos tabla;
-   private Token tmp;
+   
 
 
    public TablaSimbolos getTablaSimbolos() {
@@ -305,7 +305,7 @@ void grupoCondiciones() throws ParseException:
   )
   {
 	//aqui la validacion de grupo de condiciones
-	tabla.operadorPermitido(var1,var2,t.image);
+	tabla.operadorPermitido(var1,var2,t);
   }
 }
 
@@ -318,7 +318,7 @@ Variable valor(String accion) throws ParseException:
 Variable valor2(String accion) throws ParseException:
 {Token t;}
 {   
-  t=<IDENTIFICADOR> {jjtThis.value = t.image;tabla.validoUsar(t,accion); return tabla.var(t,tabla.obtenerTipo(t));} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;return tabla.var("Numero");} #ENTERO(true)
+  t=<IDENTIFICADOR> {jjtThis.value = t.image;tabla.validoUsar(t,accion); return tabla.var(t,tabla.obtenerTipo(t));} #IDENTIFICADOR(true)|t=<ENTERO> {jjtThis.value = t.image;return tabla.var(t,"Numero");} #ENTERO(true)
 }
 
 
