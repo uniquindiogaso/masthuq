@@ -168,7 +168,7 @@ public class Ventana extends javax.swing.JFrame {
         });
         jToolBar1.add(bGuardarComo);
 
-        bCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/run.png"))); // NOI18N
+        bCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/play!.png"))); // NOI18N
         bCompilar.setToolTipText("¡Compilar!");
         bCompilar.setFocusable(false);
         bCompilar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -517,19 +517,31 @@ abrirJFileChooser();
         
         
         ArrayList<Semantica> eSemanticos = compilador.getTablaSimbolos().getErroresSemanticos();
-        String msjConsola = "";
+        String msjConsola = "Analisis Semantico Finalizado:\n";
         
         if(!eSemanticos.isEmpty()){
+            System.out.println("Errores Semánticos " + eSemanticos.size());
             colorConsola(Color.RED);
             for(Semantica e : eSemanticos){
-                String linea  = "";
-                msjConsola+= e.getMensaje();
+                String registro  = "Error Semantico: ";
+                registro+= e.getMensaje();
+                boolean n = false;
                 if ( e.getToken() != null ){
-                    
+                   registro+= " '" + e.getToken().image + "' ";
+                   n = true;
                 }
-                msjConsola+= "/n";
+                if ( e.getToken2() != null ){
+                   registro+= " '" + e.getToken2().image + "' ";
+                }
+                
+                if ( n ){
+                    registro+= " Linea : " + e.getToken().beginLine;
+                }
+                msjConsola+= registro+"\n";
             }            
-        }        
+        }
+       
+        jTxtAreaConsola.setText(msjConsola);
     }
 
 }

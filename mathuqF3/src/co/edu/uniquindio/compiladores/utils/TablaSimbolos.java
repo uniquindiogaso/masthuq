@@ -199,15 +199,15 @@ public class TablaSimbolos {
 			// aca reportar error - operandos no son compatibles
 			System.out.println("Condicionadores no compatibles para " + operador + " en linea " + ope.beginLine);
 			
-			String msjError = "Condicionadores no compatibles para operador: " + operador;
+			String msjError = "Condicionadores no compatibles para operador: '" + operador+"'";
 			
 			if (var1.isVar() && var1.getLexema() != null) {
 				System.out.println("para " + var1.getLexema().image + " : " + var1.getLexema().beginLine);
-				msjError+= " invalido : " + var1.getLexema().image;
+				msjError+= " invalido : '" + var1.getLexema().image+"'";
 			}
 			if (var2.isVar() && var2.getLexema() != null) {
 				System.out.println("para " + var2.getLexema().image + " : " + var2.getLexema().beginLine);
-				msjError+= " invalido : " + var2.getLexema().image;
+				msjError+= " invalido : '" + var2.getLexema().image+"'";
 			}
 			
 			erroresSemanticos.add(new Semantica(null, msjError + "  Linea: " + ope.beginLine));
@@ -308,7 +308,7 @@ public class TablaSimbolos {
 			// agregar a tabla de errores
 			System.out.println(
 					token.image + "  no se le puede asignar un " + tipo.getTipo() + " linea " + token.beginLine);
-			erroresSemanticos.add((new Semantica(token, " No se le puede asignar un " + tipo.getTipo() + " no corresponden los tipos.")));
+			erroresSemanticos.add((new Semantica(token, "No se puede asignar un " + tipo.getTipo() + ", no corresponden los tipos.")));
 		}
 
 		if (existe && tipoValido) {

@@ -1,0 +1,9 @@
+Numero a,b,c,d,e,f.
+Cadena e,f,l,m,n,p,q.
+a=[x*6]/var.
+e=Leer[].
+Si  e == a Entonces
+Escribir["Estuvo bien"@a@"cadena salida"].
+Sino
+Escribir["Estuvo bien"@a@"cadena salida2"].
+Finsi
