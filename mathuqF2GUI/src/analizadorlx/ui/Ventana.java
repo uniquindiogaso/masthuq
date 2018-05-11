@@ -7,6 +7,7 @@ import co.edu.uniquindio.compiladores.frontend.lexico.ParseException;
 import co.edu.uniquindio.compiladores.frontend.lexico.SimpleNode;
 import co.edu.uniquindio.compiladores.frontend.lexico.TokenMgrError;
 import co.edu.uniquindio.compiladores.utils.Impresion;
+import co.edu.uniquindio.compiladores.utils.Semantica;
 import co.edu.uniquindio.compiladores.utils.TablaSimbolos;
 import co.edu.uniquindio.compiladores.utils.Variable;
 import java.awt.Color;
@@ -345,7 +346,7 @@ abrirJFileChooser();
                     String consola = "Analisis Sintáctico realizado con exito.";
                     jTxtAreaConsola.setText(consola);
                     
-                    imprimirTabla(sintacticoA);
+                    comprobarErroresSemanticos(sintacticoA);
                 } else {
                     colorConsola(Color.RED);
                     String consola = Impresion.imprimirErrores(sintacticoA.getErrores());
@@ -505,15 +506,30 @@ abrirJFileChooser();
         permitirAnalizar = false;
     }
 
-    private void imprimirTabla(Analizador sintacticoA) {
+    private void comprobarErroresSemanticos(Analizador compilador) {
         System.out.println("******* Tabla de Simbolos *******");
         
-        ArrayList<Variable> tabla = sintacticoA.getTablaSimbolos().getTabla();
+        ArrayList<Variable> tabla = compilador.getTablaSimbolos().getTabla();
 
         for(Variable v : tabla){
             System.out.println("TOKEN " + v.getToken() + " TIPO " + v.getTipo() + " ¿TIENE VALOR? " + v.getValor());
         }
         
+        
+        ArrayList<Semantica> eSemanticos = compilador.getTablaSimbolos().getErroresSemanticos();
+        String msjConsola = "";
+        
+        if(!eSemanticos.isEmpty()){
+            colorConsola(Color.RED);
+            for(Semantica e : eSemanticos){
+                String linea  = "";
+                msjConsola+= e.getMensaje();
+                if ( e.getToken() != null ){
+                    
+                }
+                msjConsola+= "/n";
+            }            
+        }        
     }
 
 }
