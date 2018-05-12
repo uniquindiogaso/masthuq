@@ -1,0 +1,19 @@
+##Este programa permite calcular el número mayor entre 2 números ingresados por el usuario, lo muestra y muestra el resultado de sumar ambos numeros## 
+ 
+Numero a, b, d. 
+Cadena c.
+ 
+Escribir["Por favor digite su nombre"]. c=Leer[]. 
+ 
+Escribir["Por favor ingrese el número a"]. a=Leer[]. 
+ 
+Escribir["Por favor ingrese el número b"]. b=Leer[]. 
+ 
+Escribir["Hola" @ c @ "El resultado de este programa"]. 
+ 
+ 
+Si a < b Entonces  Escribir["El número " @ a @ "Es mayor que " @ b]. Sino  Escribir["El número " @ b @ "Es mayor que " @ a]. 
+Finsi 
+d=a+b. 
+ 
+Escribir["la suma de " @ a @ " y de " @ b @ "es" @ d].

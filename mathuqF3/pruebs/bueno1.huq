@@ -1,0 +1,15 @@
+##Ejemplo Bueno ##
+Numero a,b,c,d,e,f.
+Cadena l,m,n,p,q.
+b = 5.
+d = Leer[].
+q="Esto es otra jodida cadena".
+m="cadena con texto 2".
+m="cadena con texto 2"@q@"introduciendo una variable".
+a=[b*6]/d.
+e=Leer[].
+Si  a <= 18 Entonces
+Escribir["La edad del eval es "@a@" años"].
+Sino
+Escribir["La edad por defecto es "@b@" a."].
+Finsi

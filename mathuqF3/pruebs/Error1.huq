@@ -1,0 +1,22 @@
+Numero a,b.
+Cadena c.
+c="hola".
+a=2*[2].
+b=3.
+a=d.
+a="ccc"@b.
+
+Si c=="hola"@2 Entonces
+a=b+3.
+Sino
+Escribir["eee"@b].
+Finsi
+
+Si "hola"=="pp" Entonces
+b=Leer[].
+Finsi
+
+
+Si [a*4]+a<"hola"@2 Entonces
+a=3.
+Finsi

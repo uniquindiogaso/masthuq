@@ -1,0 +1,4 @@
+Numero a,var.
+a=3.
+Escribir["Estuvo bien"@a@"cadena salida"].
+a=[x*6]/var.

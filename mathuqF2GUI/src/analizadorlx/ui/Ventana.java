@@ -517,7 +517,7 @@ abrirJFileChooser();
         
         
         ArrayList<Semantica> eSemanticos = compilador.getTablaSimbolos().getErroresSemanticos();
-        String msjConsola = "Analisis Semantico Finalizado:\n";
+        String msjConsola = "Analisis Semantico Finalizado - (Cantidad de Errores "+eSemanticos.size()+")\n";
         
         if(!eSemanticos.isEmpty()){
             System.out.println("Errores Semánticos " + eSemanticos.size());
