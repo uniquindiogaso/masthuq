@@ -11,6 +11,7 @@ public class Variable {
 	private String tipo;
 	//Determinar si es una variable(sorry por este hardcore)
 	private boolean var;
+	private boolean error;
 	
 	public Variable(int num, String token, Token pieza) {
 		super();
@@ -108,6 +109,20 @@ public class Variable {
 
 	public void setVar(boolean var) {
 		this.var = var;
+	}
+
+
+
+
+	public boolean isError() {
+		return error;
+	}
+
+
+
+
+	public void setError(boolean error) {
+		this.error = error;
 	}
 	
 	
