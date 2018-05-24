@@ -68,6 +68,23 @@ public class TablaSimbolos {
 		return false;
 	}
 
+	public void notificarError(String token, boolean error) {
+		for (Variable v : tabla) {
+			if (token.equals(v.getToken())) {
+				v.setError(error);
+			}
+		}
+
+	}
+
+	public boolean verificarError(String token) {
+		for (Variable v : tabla) {
+			if (token.equals(v.getToken())) {
+				return v.isError();
+			}
+		}
+		return false;
+	}
 	/**
 	 * Comprobar que una variable tenga valor definido
 	 * 
@@ -118,7 +135,8 @@ public class TablaSimbolos {
 				// FIX - Comprobar que var1 sea variable ..
 				System.out
 						.println("No se pueden realizar operaciones matematicas con Cadenas " + var1.getLexema().image);
-				erroresSemanticos.add(new Semantica(var1.getLexema(), "No se puede realizar operaciones matematicas con Cadenas"));
+				erroresSemanticos.add(
+						new Semantica(var1.getLexema(), "No se puede realizar operaciones matematicas con Cadenas"));
 				return var("null");
 			}
 
@@ -127,7 +145,8 @@ public class TablaSimbolos {
 				// FIX - Comprobar que var1 sea variable ..
 				System.out
 						.println("No se pueden realizar operaciones matematicas con Cadenas " + var2.getLexema().image);
-				erroresSemanticos.add(new Semantica(var2.getLexema(), "No se puede realizar operaciones matematicas con Cadenas"));
+				erroresSemanticos.add(
+						new Semantica(var2.getLexema(), "No se puede realizar operaciones matematicas con Cadenas"));
 				return var("null");
 			}
 
@@ -183,8 +202,11 @@ public class TablaSimbolos {
 					System.out.println("Operador" + operador
 							+ " no es compatible con Cadenas (No se pueden sumar peras con manzanas) " + t1 + " " + t2
 							+ "" + ope.beginLine);
-					
-					erroresSemanticos.add(new Semantica( null , null , "Operador " + " no es compatible con Cadenas.(No se pueden sumar peras con manzanas) Linea: " + ope.beginLine));
+
+					erroresSemanticos.add(new Semantica(null, null,
+							"Operador "
+									+ " no es compatible con Cadenas.(No se pueden sumar peras con manzanas) Linea: "
+									+ ope.beginLine));
 				}
 			} else if (tipoToken1.equals("Numero")) {
 				// Partiendo de que solo se tienen restricciones con el cadena
@@ -198,18 +220,18 @@ public class TablaSimbolos {
 		} else {
 			// aca reportar error - operandos no son compatibles
 			System.out.println("Condicionadores no compatibles para " + operador + " en linea " + ope.beginLine);
-			
-			String msjError = "Condicionadores no compatibles para operador: '" + operador+"'";
-			
+
+			String msjError = "Condicionadores no compatibles para operador: '" + operador + "'";
+
 			if (var1.isVar() && var1.getLexema() != null) {
 				System.out.println("para " + var1.getLexema().image + " : " + var1.getLexema().beginLine);
-				msjError+= " invalido : '" + var1.getLexema().image+"'";
+				msjError += " invalido : '" + var1.getLexema().image + "'";
 			}
 			if (var2.isVar() && var2.getLexema() != null) {
 				System.out.println("para " + var2.getLexema().image + " : " + var2.getLexema().beginLine);
-				msjError+= " invalido : '" + var2.getLexema().image+"'";
+				msjError += " invalido : '" + var2.getLexema().image + "'";
 			}
-			
+
 			erroresSemanticos.add(new Semantica(null, msjError + "  Linea: " + ope.beginLine));
 		}
 
@@ -234,7 +256,7 @@ public class TablaSimbolos {
 		} else {
 			// aca reportar error
 			System.out.println("Error Agregando " + token + " ya esta definido");
-			erroresSemanticos.add((new Semantica(lexema, "Ya esta definida. No se puede redefinir variables." )));
+			erroresSemanticos.add((new Semantica(lexema, "Ya esta definida. No se puede redefinir variables.")));
 		}
 	}
 
@@ -257,7 +279,7 @@ public class TablaSimbolos {
 		if (!existe) {
 			// agregar a tabla de Errores
 			System.out.println(token.image + " no esta definida: " + token.beginLine);
-			erroresSemanticos.add((new Semantica(token, "No esta definida" )));
+			erroresSemanticos.add((new Semantica(token, "No esta definida")));
 		}
 
 		if (!valor) {
@@ -265,8 +287,13 @@ public class TablaSimbolos {
 			// agregar a tabla de Errores
 			System.out.println(
 					"Para usar " + token.image + " debe tener un valor [ACCION = " + accion + "] : " + token.beginLine);
-			erroresSemanticos.add((new Semantica(token, "Para usar variable debe tener un valor. No es posible usarla en accion " + accion )));
+			erroresSemanticos.add((new Semantica(token,
+					"Para usar variable debe tener un valor. No es posible usarla en accion " + accion)));
+			notificarError(token.image,true);
+			
 			// }
+		}else{
+			notificarError(token.image, false);
 		}
 
 		return existe && valor;
@@ -288,7 +315,7 @@ public class TablaSimbolos {
 
 		boolean existe = existe(token.image);
 		boolean tipoValido = false;
-
+		boolean error= verificarError(token.image);
 		// System.out.println("Variable para token " + token.image + " : var " +
 		// tipo);
 
@@ -302,16 +329,17 @@ public class TablaSimbolos {
 		if (!existe) {
 			// agregar a tabla de errores
 			System.out.println(token.image + " no esta definida: " + token.beginLine);
-			erroresSemanticos.add((new Semantica(token, "No esta definida" )));
+			erroresSemanticos.add((new Semantica(token, "No esta definida")));
 		}
 		if (!tipoValido) {
 			// agregar a tabla de errores
 			System.out.println(
 					token.image + "  no se le puede asignar un " + tipo.getTipo() + " linea " + token.beginLine);
-			erroresSemanticos.add((new Semantica(token, "No se puede asignar un " + tipo.getTipo() + ", no corresponden los tipos.")));
+			erroresSemanticos.add((new Semantica(token,
+					"No se puede asignar un " + tipo.getTipo() + ", no corresponden los tipos.")));
 		}
 
-		if (existe && tipoValido) {
+		if (existe && tipoValido&&!error) {
 			actualizarValor(token.image);
 		}
 	}
