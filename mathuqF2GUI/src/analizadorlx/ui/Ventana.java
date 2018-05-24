@@ -1,6 +1,7 @@
 package analizadorlx.ui;
 
 import analizadorlx.utilidades.Archivos;
+import analizadorlx.utilidades.ParserJava;
 import co.edu.uniquindio.compiladores.frontend.lexico.Analizador;
 import co.edu.uniquindio.compiladores.frontend.lexico.Node;
 import co.edu.uniquindio.compiladores.frontend.lexico.ParseException;
@@ -8,9 +9,9 @@ import co.edu.uniquindio.compiladores.frontend.lexico.SimpleNode;
 import co.edu.uniquindio.compiladores.frontend.lexico.TokenMgrError;
 import co.edu.uniquindio.compiladores.utils.Impresion;
 import co.edu.uniquindio.compiladores.utils.Semantica;
-import co.edu.uniquindio.compiladores.utils.TablaSimbolos;
 import co.edu.uniquindio.compiladores.utils.Variable;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,7 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JTree;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -46,8 +46,13 @@ public class Ventana extends javax.swing.JFrame {
 
     //Ruta Archivo
     String rutaArchivo = "";
+    String nombreArchivo = "";
 
     private DefaultMutableTreeNode raiz = new DefaultMutableTreeNode("Estructura");
+
+    private StringBuilder codigoJava;
+    private ParserJava parser;
+    private ArrayList<Variable> tablaSimbolos;
 
     /**
      * Metodo constructor de la ventana
@@ -61,6 +66,8 @@ public class Ventana extends javax.swing.JFrame {
         archivoManager = new Archivos();
         jTxtAreaConsola.setForeground(Color.blue);
 
+        parser = new ParserJava();
+        bGenerarJava.setVisible(false);
     }
 
     /**
@@ -88,6 +95,7 @@ public class Ventana extends javax.swing.JFrame {
         bCompilar = new javax.swing.JButton();
         bAcerca = new javax.swing.JButton();
         bSalir = new javax.swing.JButton();
+        bGenerarJava = new javax.swing.JButton();
 
         jMenuItem4.setText("jMenuItem4");
 
@@ -204,6 +212,18 @@ public class Ventana extends javax.swing.JFrame {
         });
         jToolBar1.add(bSalir);
 
+        bGenerarJava.setIcon(new javax.swing.ImageIcon(getClass().getResource("/analizadorlx/ui/img/java.png"))); // NOI18N
+        bGenerarJava.setToolTipText("Generar Archivo .java en base al resultado del compilador");
+        bGenerarJava.setFocusable(false);
+        bGenerarJava.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bGenerarJava.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bGenerarJava.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bGenerarJavaActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(bGenerarJava);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -246,13 +266,14 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_bNuevoActionPerformed
 
     private void bCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCargarActionPerformed
-       jTxtAreaConsola.setText("");
-cEditor.setText("");
-abrirJFileChooser();
+        jTxtAreaConsola.setText("");
+        cEditor.setText("");
+        bGenerarJava.setVisible(false);
+        abrirJFileChooser();
     }//GEN-LAST:event_bCargarActionPerformed
 
     private void bGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGuardarActionPerformed
-               if (!cEditor.getText().isEmpty()) {
+        if (!cEditor.getText().isEmpty()) {
             GuardarJFileChooser(rutaArchivo.isEmpty(), true);
         } else {
             JOptionPane.showMessageDialog(null, "Editor vacio, para guardar un archivo debe escribir codigo!");
@@ -260,12 +281,12 @@ abrirJFileChooser();
     }//GEN-LAST:event_bGuardarActionPerformed
 
     private void bGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGuardarComoActionPerformed
-         GuardarJFileChooser(true, true);
+        GuardarJFileChooser(true, true);
     }//GEN-LAST:event_bGuardarComoActionPerformed
 
     private void bCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCompilarActionPerformed
-       ejecutar();
-       
+        ejecutar();
+
     }//GEN-LAST:event_bCompilarActionPerformed
 
     private void bAcercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAcercaActionPerformed
@@ -276,12 +297,17 @@ abrirJFileChooser();
         System.exit(0);
     }//GEN-LAST:event_bSalirActionPerformed
 
+    private void bGenerarJavaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGenerarJavaActionPerformed
+        construirArchivoJava();
+    }//GEN-LAST:event_bGenerarJavaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTree arbol;
     private javax.swing.JButton bAcerca;
     private javax.swing.JButton bCargar;
     private javax.swing.JButton bCompilar;
+    private javax.swing.JButton bGenerarJava;
     private javax.swing.JButton bGuardar;
     private javax.swing.JButton bGuardarComo;
     private javax.swing.JButton bNuevo;
@@ -305,9 +331,20 @@ abrirJFileChooser();
     public void generarArbol(DefaultMutableTreeNode raiz, Node padre) {
         for (int i = 0; i < padre.jjtGetNumChildren(); i++) {
             Node nuevoPadre = padre.jjtGetChild(i);
+
             String finales = nuevoPadre.toString();
             if (nuevoPadre.jjtGetNumChildren() == 0) {
                 finales += "(" + ((SimpleNode) nuevoPadre).jjtGetValue().toString() + ")";
+                if (nuevoPadre.jjtGetParent().toString().equals("leer")) {
+                    String variable = ((SimpleNode) nuevoPadre.jjtGetParent().jjtGetParent().jjtGetParent().jjtGetChild(0)).jjtGetValue().toString();
+                    if ("Numero".equals(obtenerTipoDVariable(variable))) {
+                        codigoJava.append(parser.toJavaCase(((SimpleNode) nuevoPadre).jjtGetValue().toString()));
+                    } else {
+                        codigoJava.append(parser.toJava(((SimpleNode) nuevoPadre).jjtGetValue().toString()));
+                    }
+                } else {
+                    codigoJava.append(parser.toJava(((SimpleNode) nuevoPadre).jjtGetValue().toString()));
+                }
             }
             DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(finales);
             generarArbol(nodo, nuevoPadre);
@@ -319,6 +356,7 @@ abrirJFileChooser();
      * Ejecutar Analizador Sintactico
      */
     private void ejecutar() {
+        codigoJava = new StringBuilder();
         if (permitirAnalizar) {
             try {
                 GuardarJFileChooser(false, false);
@@ -335,8 +373,8 @@ abrirJFileChooser();
                 System.out.println("anal.getErrores().size() " + sintacticoA.getErrores().size());
 
                 if (sintacticoA.getErrores().isEmpty()) {
-                    System.out.println("Nodo Principal  " + nodo);
-                    System.out.println("Nodo Hijos " + nodo.jjtGetNumChildren());
+
+                    obtenerTablaSimbolos(sintacticoA);
 
                     raiz = new DefaultMutableTreeNode("Estructura");
                     generarArbol(raiz, nodo);
@@ -345,9 +383,17 @@ abrirJFileChooser();
                     colorConsola(Color.BLUE);
                     String consola = "Analisis Sintáctico realizado con exito.";
                     jTxtAreaConsola.setText(consola);
-                    
-                    comprobarErroresSemanticos(sintacticoA);
+
+                    int erroresSem = comprobarErroresSemanticos(sintacticoA);
+
+                    if (0 == erroresSem) {
+                        bGenerarJava.setVisible(true);
+                    } else {
+                        bGenerarJava.setVisible(false);
+                    }
+
                 } else {
+                    bGenerarJava.setVisible(false);
                     colorConsola(Color.RED);
                     String consola = Impresion.imprimirErrores(sintacticoA.getErrores());
                     jTxtAreaConsola.setText(consola);
@@ -372,12 +418,12 @@ abrirJFileChooser();
             }
 
         } else {
-            String msj= "Para realizar un análisis Sintáctico\nse requiere cargar un archivo válido.\nPor favor abra un Archivo .huq o cree un nuevo archivo.";
-            
-            if ( rutaArchivo.isEmpty() && !cEditor.getText().isEmpty()){
+            String msj = "Para realizar un análisis Sintáctico\nse requiere cargar un archivo válido.\nPor favor abra un Archivo .huq o cree un nuevo archivo.";
+
+            if (rutaArchivo.isEmpty() && !cEditor.getText().isEmpty()) {
                 msj = "Para ejecutar analisis primero debe guardar el archivo.";
-            }                     
-            
+            }
+
             JOptionPane.showMessageDialog(null, msj);
         }
 
@@ -415,8 +461,8 @@ abrirJFileChooser();
      */
     private boolean GuardarJFileChooser(boolean guardarComo, boolean callback) {
         boolean ban = false;
-        boolean guarda = false;       
-        
+        boolean guarda = false;
+
         if (guardarComo) {
             JFileChooser fileChoser = new JFileChooser();
             fileChoser.setSelectedFile(new File("miMarthUQ_" + System.currentTimeMillis() + ".huq"));
@@ -452,6 +498,37 @@ abrirJFileChooser();
         return ban;
     }
 
+    private boolean GuardarJavaJFileChooser(String contenidoJava) {
+
+        boolean guarda = false;
+
+        JFileChooser fileChoser = new JFileChooser();
+        fileChoser.setSelectedFile(new File(nombreArchivo + ".java"));
+        fileChoser.setFileFilter(new FileNameExtensionFilter(".java", "java"));
+        fileChoser.showSaveDialog(this);
+        File nuevoArchivo = fileChoser.getSelectedFile();
+
+        if (null != nuevoArchivo) {
+            //guardarComo....
+            guarda = archivoManager.guardar(contenidoJava, nuevoArchivo);
+
+            if (guarda) {
+                JOptionPane.showMessageDialog(null, "Archivo guardado correctamente");
+                try {
+                    //Intentar Abrir Archivo
+                    Desktop d = Desktop.getDesktop();
+                    d.open(nuevoArchivo);
+                } catch (IOException ex) {
+                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El archivo no pudo guardarse");
+            }
+        }
+
+        return guarda;
+    }
+
     /**
      * Actualiza la ruta del archivo analizado
      *
@@ -461,7 +538,9 @@ abrirJFileChooser();
         try {
             setTitle(tituloVentana + " | analizando : " + archivo.getCanonicalPath());
             rutaArchivo = archivo.getCanonicalPath();
-            
+
+            //obtener nombre del archivo sin extension.
+            nombreArchivo = archivo.getName().replaceFirst("[.][^.]+$", "");
             //Permite Analizar si actualiza las rutas
             permitirAnalizar = true;
 
@@ -497,51 +576,97 @@ abrirJFileChooser();
         DefaultMutableTreeNode raizError = new DefaultMutableTreeNode("No Arbol");
         DefaultTreeModel modelo = new DefaultTreeModel(raizError);
         arbol.setModel(modelo);
-        
+
         cEditor.setText("");
         jTxtAreaConsola.setText("");
-        
+
         rutaArchivo = "";
-        
+
         permitirAnalizar = false;
+        bGenerarJava.setVisible(false);
     }
 
-    private void comprobarErroresSemanticos(Analizador compilador) {
+    private String obtenerTipoDVariable(String var) {
+        for (Variable v : tablaSimbolos) {
+            if (var.equals(v.getToken())) {
+                return v.getTipo();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Para poder comprobar si en la construccion del arbol se debe traer del
+     * compilador la tabla de simbolos
+     *
+     * @param compilador
+     */
+    private void obtenerTablaSimbolos(Analizador compilador) {
+        tablaSimbolos = compilador.getTablaSimbolos().getTabla();
+    }
+
+    private int comprobarErroresSemanticos(Analizador compilador) {
+
+        int cantErrores = 0;
         System.out.println("******* Tabla de Simbolos *******");
-        
+
         ArrayList<Variable> tabla = compilador.getTablaSimbolos().getTabla();
 
-        for(Variable v : tabla){
+        for (Variable v : tabla) {
             System.out.println("TOKEN " + v.getToken() + " TIPO " + v.getTipo() + " ¿TIENE VALOR? " + v.getValor());
         }
-        
-        
+
         ArrayList<Semantica> eSemanticos = compilador.getTablaSimbolos().getErroresSemanticos();
-        String msjConsola = "Analisis Semantico Finalizado - (Cantidad de Errores "+eSemanticos.size()+")\n";
-        
-        if(!eSemanticos.isEmpty()){
-            System.out.println("Errores Semánticos " + eSemanticos.size());
+        String msjConsola = "Analisis Semantico Finalizado - (Cantidad de Errores " + eSemanticos.size() + ")\n";
+
+        System.out.println("Errores Semánticos " + eSemanticos.size());
+
+        if (!eSemanticos.isEmpty()) {
             colorConsola(Color.RED);
-            for(Semantica e : eSemanticos){
-                String registro  = "Error Semantico: ";
-                registro+= e.getMensaje();
+            for (Semantica e : eSemanticos) {
+                String registro = "Error Semantico: ";
+                registro += e.getMensaje();
                 boolean n = false;
-                if ( e.getToken() != null ){
-                   registro+= " '" + e.getToken().image + "' ";
-                   n = true;
+                if (e.getToken() != null) {
+                    registro += " '" + e.getToken().image + "' ";
+                    n = true;
                 }
-                if ( e.getToken2() != null ){
-                   registro+= " '" + e.getToken2().image + "' ";
+                if (e.getToken2() != null) {
+                    registro += " '" + e.getToken2().image + "' ";
                 }
-                
-                if ( n ){
-                    registro+= " Linea : " + e.getToken().beginLine;
+
+                if (n) {
+                    registro += " Linea : " + e.getToken().beginLine;
                 }
-                msjConsola+= registro+"\n";
-            }            
+                msjConsola += registro + "\n";
+            }
+
+            cantErrores = eSemanticos.size();
         }
-       
+
         jTxtAreaConsola.setText(msjConsola);
+
+        return cantErrores;
+    }
+
+    void construirArchivoJava() {
+        String codigoCompletoJAVA = String.format("/*\n"
+                + " * Programa Generado por Compilador MathUQ\n"
+                + " * 2018 - 05\n"
+                + " */ \n"
+                + "import java.io.BufferedReader;\n"
+                + "import java.io.IOException;\n"
+                + "import java.io.InputStreamReader;\n"
+                + "\n"
+                + "public class %s {\n"
+                + "\n"
+                + "    public static void main(String args[]) throws IOException {\n"
+                + "        InputStreamReader isr = new InputStreamReader(System.in);\n"
+                + "        BufferedReader br = new BufferedReader(isr); %s     }\n"
+                + "}\n"
+                + "", (nombreArchivo.isEmpty()) ? "miMathUQ" : nombreArchivo, codigoJava.toString());
+        System.out.println("Codigo JAVA:\n" + codigoCompletoJAVA);
+        GuardarJavaJFileChooser(codigoCompletoJAVA);
     }
 
 }
