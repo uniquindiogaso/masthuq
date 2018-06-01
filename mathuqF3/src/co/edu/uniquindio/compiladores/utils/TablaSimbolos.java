@@ -289,11 +289,11 @@ public class TablaSimbolos {
 					"Para usar " + token.image + " debe tener un valor [ACCION = " + accion + "] : " + token.beginLine);
 			erroresSemanticos.add((new Semantica(token,
 					"Para usar variable debe tener un valor. No es posible usarla en accion " + accion)));
-			notificarError(token.image,true);
+			//notificarError(token.image,true);
 			
 			// }
 		}else{
-			notificarError(token.image, false);
+			//notificarError(token.image, false);
 		}
 
 		return existe && valor;
@@ -315,10 +315,12 @@ public class TablaSimbolos {
 
 		boolean existe = existe(token.image);
 		boolean tipoValido = false;
-		boolean error= verificarError(token.image);
+		//boolean error= verificarError(token.image);
 		// System.out.println("Variable para token " + token.image + " : var " +
 		// tipo);
 
+		System.out.println("**VARIABLE tipo " + tipo.toString() + " de ==== " + token.image);
+		
 		if (tipo != null) {
 			tipoValido = obtenerTipo(token).equals(tipo.getTipo());
 
@@ -339,7 +341,7 @@ public class TablaSimbolos {
 					"No se puede asignar un " + tipo.getTipo() + ", no corresponden los tipos.")));
 		}
 
-		if (existe && tipoValido&&!error) {
+		if (existe && tipoValido) {
 			actualizarValor(token.image);
 		}
 	}

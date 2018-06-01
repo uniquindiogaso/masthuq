@@ -124,6 +124,17 @@ public class Variable {
 	public void setError(boolean error) {
 		this.error = error;
 	}
+
+
+
+
+	@Override
+	public String toString() {
+		return "Variable [num=" + num + ", token=" + token + ", lexema=" + lexema + ", valor=" + valor + ", tipo="
+				+ tipo + ", var=" + var + ", error=" + error + "]";
+	}
+	
+	
 	
 	
 	

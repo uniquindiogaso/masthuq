@@ -613,7 +613,7 @@ public class Ventana extends javax.swing.JFrame {
         ArrayList<Variable> tabla = compilador.getTablaSimbolos().getTabla();
 
         for (Variable v : tabla) {
-            System.out.println("TOKEN " + v.getToken() + " TIPO " + v.getTipo() + " ¿TIENE VALOR? " + v.getValor());
+            System.out.println("TOKEN " + v.getToken() + " TIPO " + v.getTipo() + " ¿TIENE VALOR? " + v.getValor() + " tiene Error " + v.isError());
         }
 
         ArrayList<Semantica> eSemanticos = compilador.getTablaSimbolos().getErroresSemanticos();
